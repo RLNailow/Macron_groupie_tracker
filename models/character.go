@@ -9,21 +9,21 @@ type Character struct {
 
 func GetRace(name string) string {
 	demons := map[string]bool{
-		"Akaza":           true,
-		"Doma":            true,
-		"Kokushibo":       true,
-		"Gyutaro":         true,
-		"Daki":            true,
-		"Kaigaku":         true,
-		"Rui":             true,
-		"Enmu":            true,
-		"Gyokko":          true,
-		"Nakime":          true,
-		"Hantengu":        true,
-		"Kyogai":          true,
-		"Muzan Kibutsuji": true,
-		"Tamayo":          true,
-		"Yushiro":         true,
+		"Akaza":     true,
+		"Doma":      true,
+		"Kokushibo": true,
+		"Gyutaro":   true,
+		"Daki":      true,
+		"Kaigaku":   true,
+		"Rui":       true,
+		"Enmu":      true,
+		"Gyokko":    true,
+		"Nakime":    true,
+		"Hantengu":  true,
+		"Kyogai":    true,
+		"Muzan":     true,
+		"Tamayo":    true,
+		"Yushiro":   true,
 	}
 
 	if demons[name] {
