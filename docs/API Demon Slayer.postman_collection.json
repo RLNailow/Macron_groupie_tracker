@@ -1,0 +1,43 @@
+{
+	"info": {
+		"_postman_id": "c525b6c2-4425-4c09-b2db-07d5a511a18b",
+		"name": "API Demon Slayer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50136129",
+		"_collection_link": "https://lenail-6884240.postman.co/workspace/Ilian-Doe's-Workspace~8951bc17-4d86-4ec4-80b5-498a4b223ef0/collection/50136129-c525b6c2-4425-4c09-b2db-07d5a511a18b?action=share&source=collection_link&creator=50136129"
+	},
+	"item": [
+		{
+			"name": "Requête characters",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Requête combat styles",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Requête ID characters",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "Requête ID combat styles",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
