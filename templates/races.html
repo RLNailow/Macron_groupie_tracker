@@ -1,0 +1,35 @@
+{{define "page-css"}}
+<link rel="stylesheet" href="/static/css/races.css">
+{{end}}
+
+{{define "content"}}
+<div class="page-container">
+    <h1 class="page-title">Races</h1>
+
+    <!-- Grille des races (5 par ligne, juste du texte) -->
+    <div class="races-grid">
+        {{range .Races}}
+        <div class="race-card">
+            <div class="race-name">{{.}}</div>
+        </div>
+        {{end}}
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {{if .HasPrevious}}
+            <a href="/races?page={{.PreviousPage}}" class="pagination-btn">Précédent</a>
+        {{else}}
+            <button class="pagination-btn" disabled>Précédent</button>
+        {{end}}
+
+        <span class="page-info">Page {{.CurrentPage}} / {{.TotalPages}}</span>
+
+        {{if .HasNext}}
+            <a href="/races?page={{.NextPage}}" class="pagination-btn">Suivant</a>
+        {{else}}
+            <button class="pagination-btn" disabled>Suivant</button>
+        {{end}}
+    </div>
+</div>
+{{end}}

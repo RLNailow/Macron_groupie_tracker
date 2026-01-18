@@ -1,0 +1,143 @@
+/* Bouton retour en haut à gauche */
+.back-btn-detail {
+    font-size: 48px;
+    background: none;
+    border: none;
+    color: #1a1a1a;
+    margin-bottom: 30px;
+    transition: transform 0.3s;
+}
+
+.back-btn-detail:hover {
+    transform: translateX(-10px);
+}
+
+/* Contenu principal : image + infos */
+.detail-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+}
+
+/* Image du personnage */
+.detail-image {
+    background: rgba(58, 78, 68, 0.8);
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.detail-image img {
+    max-width: 100%;
+    max-height: 500px;
+    border-radius: 10px;
+}
+
+/* Infos du personnage */
+.detail-info {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* Box d'info */
+.info-box {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.info-box h1 {
+    font-size: 36px;
+    text-align: center;
+    margin: 0;
+}
+
+.info-box h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #1a1a1a;
+}
+
+.info-box p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Nom du personnage (titre spécial) */
+.detail-name {
+    background: linear-gradient(135deg, rgba(220, 20, 60, 0.2), rgba(255, 255, 255, 0.9));
+}
+
+/* Bouton "CHOOSE FOR ME !" vertical à droite */
+.random-form {
+    position: fixed;
+    right: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.choose-me-btn {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    background: rgba(90, 122, 111, 0.9);
+    color: white;
+    border: none;
+    padding: 30px 20px;
+    font-size: 20px;
+    border-radius: 50px;
+    letter-spacing: 3px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s, background 0.3s;
+}
+
+.choose-me-btn:hover {
+    transform: translateY(-50%) scale(1.05);
+    background: rgba(90, 122, 111, 1);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+    .detail-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .random-form {
+        position: static;
+        transform: none;
+        margin-top: 30px;
+    }
+
+    .choose-me-btn {
+        writing-mode: horizontal-tb;
+        width: 100%;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 600px) {
+    .detail-container {
+        padding: 20px;
+    }
+
+    .back-btn-detail {
+        font-size: 36px;
+    }
+
+    .info-box h1 {
+        font-size: 28px;
+    }
+
+    .info-box h3 {
+        font-size: 20px;
+    }
+
+    .info-box p {
+        font-size: 16px;
+    }
+}

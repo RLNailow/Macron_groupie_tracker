@@ -1,0 +1,38 @@
+{{define "page-css"}}
+<link rel="stylesheet" href="/static/css/home.css">
+{{end}}
+
+{{define "content"}}
+<div class="home-container">
+    <!-- Logo -->
+    <div class="logo-container">
+        <img src="/static/images/Demon-Slayer-Logo.png" alt="Demon Slayer Logo" class="logo">
+    </div>
+
+    <!-- Barre de recherche -->
+    <div class="search-container">
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input 
+                type="text" 
+                id="searchInput" 
+                placeholder="Rechercher un personnage..." 
+                autocomplete="off"
+            >
+            <button class="close-icon" onclick="clearSearch()">✕</button>
+        </div>
+        
+        <!-- Résultats de recherche (affichés dynamiquement) -->
+        <div class="search-results" id="searchResults"></div>
+    </div>
+
+    <!-- Personnage d'accueil (Tanjiro) -->
+    <div class="home-character">
+        <img src="/static/images/tanjiro.jpeg" alt="Tanjiro Kamado">
+    </div>
+</div>
+{{end}}
+
+{{define "page-js"}}
+<script src="/static/js/search.js"></script>
+{{end}}

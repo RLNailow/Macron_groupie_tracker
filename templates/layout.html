@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.PageTitle}}</title>
+    
+    <!-- Police Questrial depuis Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Questrial&display=swap" rel="stylesheet">
+    
+    <!-- CSS Global -->
+    <link rel="stylesheet" href="/static/css/main.css">
+    
+    <!-- CSS spécifique à la page (chargé dynamiquement) -->
+    {{block "page-css" .}}{{end}}
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <!-- Bouton retour (visible uniquement sur les pages != home) -->
+            <button class="back-btn" id="backBtn" onclick="goHome()" style="display: none;">
+                ←
+            </button>
+            
+            <!-- Bouton login/user -->
+            {{if .User}}
+                <button class="login-btn" onclick="logout()">
+                    <div class="user-icon">👤</div>
+                    <span>{{.User.Email}}</span>
+                </button>
+            {{else}}
+                <button class="login-btn" onclick="openAuthModal()">
+                    <div class="user-icon">👤</div>
+                    <span>login</span>
+                </button>
+            {{end}}
+        </div>
+
+        <!-- Hamburger Menu -->
+        <button class="hamburger" onclick="toggleSidebar()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </header>
+
+    <!-- Contenu principal de la page -->
+    <main class="main-content">
+        {{block "content" .}}{{end}}
+    </main>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>MENU</h2>
+            <button class="close-sidebar" onclick="toggleSidebar()">✕</button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="/characters" class="menu-item">Personnages</a>
+            <a href="/races" class="menu-item">Races</a>
+            <a href="/combat-styles" class="menu-item">Styles de combat</a>
+            <a href="/quotes" class="menu-item">Citations</a>
+            <a href="/random" class="menu-item">Aléatoire</a>
+        </nav>
+
+        {{if .User}}
+            <button class="logout-btn" onclick="logout()">Déconnexion</button>
+        {{end}}
+    </div>
+
+    <!-- Overlay pour fermer la sidebar en cliquant à côté -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- Modal Login/Register -->
+    <div class="auth-modal" id="authModal">
+        <div class="auth-content">
+            <h2 id="authTitle">Connexion</h2>
+            
+            <form id="authForm" onsubmit="handleAuth(event)">
+                <input type="email" id="authEmail" placeholder="Email" required>
+                <input type="password" id="authPassword" placeholder="Mot de passe" required>
+                <button type="submit">Valider</button>
+            </form>
+
+            <p class="auth-toggle" onclick="toggleAuthMode()">
+                <span id="authToggleText">Pas encore de compte ? S'inscrire</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- JavaScript Global -->
+    <script src="/static/js/main.js"></script>
+    
+    <!-- JavaScript spécifique à la page -->
+    {{block "page-js" .}}{{end}}
+</body>
+</html>

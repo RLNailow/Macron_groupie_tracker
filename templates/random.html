@@ -1,0 +1,15 @@
+
+{{define "page-css"}}
+<link rel="stylesheet" href="/static/css/random.css">
+{{end}}
+
+{{define "content"}}
+<div class="random-container">
+    <h1 class="page-title">Aléatoire</h1>
+
+    <!-- Bouton géant "CHOOSE FOR ME !" -->
+    <form action="/random" method="POST">
+        <button type="submit" class="choose-btn">CHOOSE FOR ME !</button>
+    </form>
+</div>
+{{end}}

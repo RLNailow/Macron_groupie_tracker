@@ -1,0 +1,37 @@
+{{define "page-css"}}
+<link rel="stylesheet" href="/static/css/characters.css">
+{{end}}
+
+{{define "content"}}
+<div class="page-container">
+    <h1 class="page-title">Personnages</h1>
+
+    <!-- Grille des personnages (5 par ligne) -->
+    <div class="characters-grid">
+        {{range .Characters}}
+        <a href="/characters/{{.ID}}" class="character-card">
+            <!-- Image du personnage depuis l'API -->
+            <div class="character-image" style="background-image: url('{{.Img}}')"></div>
+            <div class="character-name">{{.Name}}</div>
+        </a>
+        {{end}}
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {{if .HasPrevious}}
+            <a href="/characters?page={{.PreviousPage}}" class="pagination-btn">Précédent</a>
+        {{else}}
+            <button class="pagination-btn" disabled>Précédent</button>
+        {{end}}
+
+        <span class="page-info">Page {{.CurrentPage}} / {{.TotalPages}}</span>
+
+        {{if .HasNext}}
+            <a href="/characters?page={{.NextPage}}" class="pagination-btn">Suivant</a>
+        {{else}}
+            <button class="pagination-btn" disabled>Suivant</button>
+        {{end}}
+    </div>
+</div>
+{{end}}

@@ -1,0 +1,77 @@
+/* ========== COMBAT STYLES PAGE ========== */
+
+/* Grille 5 colonnes */
+.styles-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 30px;
+    margin-bottom: 40px;
+}
+
+/* Carte style de combat */
+.style-card {
+    background: rgba(58, 78, 68, 0.8);
+    padding: 30px 20px;
+    border-radius: 10px;
+    text-align: center;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: default;
+}
+
+.style-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+/* Nom du style */
+.style-name {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+/* Description (si disponible) */
+.style-description {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.4;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1200px) {
+    .styles-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .styles-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .styles-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .style-card {
+        padding: 20px 15px;
+        min-height: 150px;
+    }
+
+    .style-name {
+        font-size: 16px;
+    }
+
+    .style-description {
+        font-size: 12px;
+    }
+}

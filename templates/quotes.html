@@ -1,0 +1,37 @@
+
+{{define "page-css"}}
+<link rel="stylesheet" href="/static/css/quotes.css">
+{{end}}
+
+{{define "content"}}
+<div class="page-container">
+    <h1 class="page-title">citations</h1>
+
+    <!-- Grille des citations (5 par ligne, cartes blanches cliquables) -->
+    <div class="quotes-grid">
+        {{range .Characters}}
+        <a href="/characters/{{.ID}}" class="quote-card">
+            <div class="quote-text">"{{.Quote}}"</div>
+            <div class="quote-author">- {{.Name}}</div>
+        </a>
+        {{end}}
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {{if .HasPrevious}}
+            <a href="/quotes?page={{.PreviousPage}}" class="pagination-btn">Précédent</a>
+        {{else}}
+            <button class="pagination-btn" disabled>Précédent</button>
+        {{end}}
+
+        <span class="page-info">Page {{.CurrentPage}} / {{.TotalPages}}</span>
+
+        {{if .HasNext}}
+            <a href="/quotes?page={{.NextPage}}" class="pagination-btn">Suivant</a>
+        {{else}}
+            <button class="pagination-btn" disabled>Suivant</button>
+        {{end}}
+    </div>
+</div>
+{{end}}

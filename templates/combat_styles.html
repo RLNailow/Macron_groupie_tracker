@@ -1,0 +1,38 @@
+{{define "page-css"}}
+<link rel="stylesheet" href="/static/css/combat_styles.css">
+{{end}}
+
+{{define "content"}}
+<div class="page-container">
+    <h1 class="page-title">Styles de combat</h1>
+
+    <!-- Grille des styles (5 par ligne) -->
+    <div class="styles-grid">
+        {{range .Styles}}
+        <div class="style-card">
+            <div class="style-name">{{.Name}}</div>
+            {{if .Description}}
+            <div class="style-description">{{.Description}}</div>
+            {{end}}
+        </div>
+        {{end}}
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination">
+        {{if .HasPrevious}}
+            <a href="/combat-styles?page={{.PreviousPage}}" class="pagination-btn">Précédent</a>
+        {{else}}
+            <button class="pagination-btn" disabled>Précédent</button>
+        {{end}}
+
+        <span class="page-info">Page {{.CurrentPage}} / {{.TotalPages}}</span>
+
+        {{if .HasNext}}
+            <a href="/combat-styles?page={{.NextPage}}" class="pagination-btn">Suivant</a>
+        {{else}}
+            <button class="pagination-btn" disabled>Suivant</button>
+        {{end}}
+    </div>
+</div>
+{{end}}

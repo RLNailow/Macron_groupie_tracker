@@ -1,0 +1,40 @@
+/* Auteur de la citation */
+.quote-author {
+    font-weight: bold;
+    font-size: 14px;
+    color: #5a7a6f;
+    text-align: center;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1200px) {
+    .quotes-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .quotes-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .quotes-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .quote-card {
+        padding: 20px;
+        min-height: 180px;
+    }
+
+    .quote-text {
+        font-size: 14px;
+    }
+
+    .quote-author {
+        font-size: 12px;
+    }
+}

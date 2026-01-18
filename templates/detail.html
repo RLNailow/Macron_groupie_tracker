@@ -1,0 +1,49 @@
+{{define "page-css"}}
+<link rel="stylesheet" href="/static/css/detail.css">
+{{end}}
+
+{{define "content"}}
+<div class="detail-container">
+    <!-- Bouton retour -->
+    <button class="back-btn-detail" onclick="history.back()">←</button>
+
+    <div class="detail-content">
+        <!-- Image du personnage -->
+        <div class="detail-image">
+            <img src="{{.Character.Img}}" alt="{{.Character.Name}}">
+        </div>
+
+        <!-- Informations du personnage -->
+        <div class="detail-info">
+            <!-- Nom -->
+            <div class="info-box detail-name">
+                <h1>{{.Character.Name}}</h1>
+            </div>
+
+            <!-- Citation -->
+            {{if .Character.Quote}}
+            <div class="info-box">
+                <h3>"{{.Character.Quote}}"</h3>
+            </div>
+            {{end}}
+
+            <!-- Race -->
+            <div class="info-box">
+                <h3>Race</h3>
+                <p>{{.Character.Race}}</p>
+            </div>
+
+            <!-- Style de combat -->
+            <div class="info-box">
+                <h3>Style de combat</h3>
+                <p>{{.CombatStyle}}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bouton "CHOOSE FOR ME !" vertical -->
+    <form action="/random" method="POST" class="random-form">
+        <button type="submit" class="choose-me-btn">CHOOSE FOR ME !</button>
+    </form>
+</div>
+{{end}}
