@@ -49,26 +49,26 @@
 <script>
 // Fonction embarquée pour garantir qu'elle soit disponible
 async function goToRandomCharacter() {
-    console.log('🔥 Bouton cliqué ! Démarrage...');
+    console.log('Bouton cliqué ! Démarrage...');
     
     try {
         console.log('📡 Appel de /api/random-character...');
         
         const response = await fetch('/api/random-character');
         
-        console.log('📥 Réponse reçue:', response.status);
+        console.log('Réponse reçue:', response.status);
         
         if (!response.ok) {
             throw new Error('Erreur lors de la récupération');
         }
         
         const data = await response.json();
-        console.log('✅ Données reçues:', data);
+        console.log('Données reçues:', data);
         
-        console.log('🚀 Redirection vers /characters/' + data.id);
+        console.log('Redirection vers /characters/' + data.id);
         window.location.href = `/characters/${data.id}`;
     } catch (error) {
-        console.error('❌ ERREUR:', error);
+        console.error('ERREUR:', error);
         alert('Erreur: ' + error.message);
     }
 }

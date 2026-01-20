@@ -23,7 +23,7 @@ func CharactersHandler(w http.ResponseWriter, r *http.Request) {
 	apiService := services.GetAPIService()
 	allCharacters, err := apiService.GetAllCharacters()
 	if err != nil {
-		log.Printf("❌ Erreur récupération personnages: %v", err)
+		log.Printf("Erreur récupération personnages: %v", err)
 		http.Error(w, "Erreur chargement des personnages", http.StatusInternalServerError)
 		return
 	}
@@ -50,7 +50,7 @@ func CharactersHandler(w http.ResponseWriter, r *http.Request) {
 	// Charger le template
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/characters.html")
 	if err != nil {
-		log.Printf("❌ Erreur chargement template characters: %v", err)
+		log.Printf("Erreur chargement template characters: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}
@@ -80,7 +80,7 @@ func CharactersHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Rendre le template
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
-		log.Printf("❌ Erreur rendu template characters: %v", err)
+		log.Printf("Erreur rendu template characters: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}

@@ -14,7 +14,7 @@ func ErrorHandler(w http.ResponseWriter, r *http.Request) {
 	// Charger le template 404
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/404.html")
 	if err != nil {
-		log.Printf("❌ Erreur chargement template 404: %v", err)
+		log.Printf("Erreur chargement template 404: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}
@@ -30,6 +30,6 @@ func ErrorHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Rendre le template
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
-		log.Printf("❌ Erreur rendu template 404: %v", err)
+		log.Printf("Erreur rendu template 404: %v", err)
 	}
 }

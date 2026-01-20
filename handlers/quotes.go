@@ -21,7 +21,7 @@ func QuotesHandler(w http.ResponseWriter, r *http.Request) {
 	apiService := services.GetAPIService()
 	charactersWithQuotes, err := apiService.GetCharactersWithQuotes()
 	if err != nil {
-		log.Printf("❌ Erreur récupération citations: %v", err)
+		log.Printf("Erreur récupération citations: %v", err)
 		http.Error(w, "Erreur chargement des citations", http.StatusInternalServerError)
 		return
 	}
@@ -46,7 +46,7 @@ func QuotesHandler(w http.ResponseWriter, r *http.Request) {
 	// Charger le template
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/quotes.html")
 	if err != nil {
-		log.Printf("❌ Erreur chargement template quotes: %v", err)
+		log.Printf("Erreur chargement template quotes: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}
@@ -76,7 +76,7 @@ func QuotesHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Rendre le template
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
-		log.Printf("❌ Erreur rendu template quotes: %v", err)
+		log.Printf("Erreur rendu template quotes: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}

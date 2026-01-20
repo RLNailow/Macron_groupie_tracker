@@ -21,7 +21,7 @@ func CombatStylesHandler(w http.ResponseWriter, r *http.Request) {
 	apiService := services.GetAPIService()
 	allStyles, err := apiService.GetBreathingTechniques()
 	if err != nil {
-		log.Printf("❌ Erreur récupération styles de combat: %v", err)
+		log.Printf("Erreur récupération styles de combat: %v", err)
 		http.Error(w, "Erreur chargement des styles de combat", http.StatusInternalServerError)
 		return
 	}
@@ -46,7 +46,7 @@ func CombatStylesHandler(w http.ResponseWriter, r *http.Request) {
 	// Charger le template
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/combat_styles.html")
 	if err != nil {
-		log.Printf("❌ Erreur chargement template combat_styles: %v", err)
+		log.Printf("Erreur chargement template combat_styles: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}
@@ -76,7 +76,7 @@ func CombatStylesHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Rendre le template
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
-		log.Printf("❌ Erreur rendu template combat_styles: %v", err)
+		log.Printf("Erreur rendu template combat_styles: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}

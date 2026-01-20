@@ -51,7 +51,7 @@ func InitAuthService() error {
 		}
 	}
 
-	log.Println("✅ Auth Service initialisé")
+	log.Println("Auth Service initialisé")
 	return nil
 }
 
@@ -111,7 +111,7 @@ func (s *AuthService) Login(email, password string) (*models.User, error) {
 			if user.Password != password {
 				return nil, ErrInvalidPassword
 			}
-			log.Printf("✅ Connexion réussie: %s", email)
+			log.Printf("Connexion réussie: %s", email)
 			return &user, nil
 		}
 	}

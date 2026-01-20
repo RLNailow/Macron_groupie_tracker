@@ -11,7 +11,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	// Charger le template
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/home.html")
 	if err != nil {
-		log.Printf("❌ Erreur chargement template home: %v", err)
+		log.Printf("Erreur chargement template home: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}
@@ -27,7 +27,7 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Rendre le template
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
-		log.Printf("❌ Erreur rendu template home: %v", err)
+		log.Printf("Erreur rendu template home: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}

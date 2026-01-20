@@ -21,7 +21,7 @@ func RacesHandler(w http.ResponseWriter, r *http.Request) {
 	apiService := services.GetAPIService()
 	allRaces, err := apiService.GetUniqueRaces()
 	if err != nil {
-		log.Printf("❌ Erreur récupération races: %v", err)
+		log.Printf("Erreur récupération races: %v", err)
 		http.Error(w, "Erreur chargement des races", http.StatusInternalServerError)
 		return
 	}
@@ -46,7 +46,7 @@ func RacesHandler(w http.ResponseWriter, r *http.Request) {
 	// Charger le template
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/races.html")
 	if err != nil {
-		log.Printf("❌ Erreur chargement template races: %v", err)
+		log.Printf("Erreur chargement template races: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}
@@ -76,7 +76,7 @@ func RacesHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Rendre le template
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
-		log.Printf("❌ Erreur rendu template races: %v", err)
+		log.Printf("Erreur rendu template races: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}

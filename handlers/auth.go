@@ -24,7 +24,7 @@ func LoginHandler(w http.ResponseWriter, r *http.Request) {
 	authService := services.GetAuthService()
 	user, err := authService.Login(creds.Email, creds.Password)
 	if err != nil {
-		log.Printf("❌ Échec login: %s - %v", creds.Email, err)
+		log.Printf("Échec login: %s - %v", creds.Email, err)
 		respondJSON(w, http.StatusUnauthorized, map[string]string{
 			"error": "Email ou mot de passe invalide",
 		})
@@ -74,7 +74,7 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	authService := services.GetAuthService()
 	user, err := authService.Register(creds.Email, creds.Password)
 	if err != nil {
-		log.Printf("❌ Échec register: %s - %v", creds.Email, err)
+		log.Printf("Échec register: %s - %v", creds.Email, err)
 		respondJSON(w, http.StatusConflict, map[string]string{
 			"error": "Cet email est déjà utilisé",
 		})

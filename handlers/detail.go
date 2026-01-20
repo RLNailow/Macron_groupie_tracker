@@ -17,7 +17,7 @@ func DetailHandler(w http.ResponseWriter, r *http.Request) {
 	idStr := vars["id"]
 	id, err := strconv.Atoi(idStr)
 	if err != nil {
-		log.Printf("❌ ID invalide: %s", idStr)
+		log.Printf("ID invalide: %s", idStr)
 		http.Redirect(w, r, "/404", http.StatusSeeOther)
 		return
 	}
@@ -26,7 +26,7 @@ func DetailHandler(w http.ResponseWriter, r *http.Request) {
 	apiService := services.GetAPIService()
 	character, err := apiService.GetCharacterByID(id)
 	if err != nil {
-		log.Printf("❌ Personnage %d non trouvé: %v", id, err)
+		log.Printf("Personnage %d non trouvé: %v", id, err)
 		http.Redirect(w, r, "/404", http.StatusSeeOther)
 		return
 	}
@@ -37,7 +37,7 @@ func DetailHandler(w http.ResponseWriter, r *http.Request) {
 	// Charger le template
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/detail.html")
 	if err != nil {
-		log.Printf("❌ Erreur chargement template detail: %v", err)
+		log.Printf("Erreur chargement template detail: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}
@@ -57,7 +57,7 @@ func DetailHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Rendre le template
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
-		log.Printf("❌ Erreur rendu template detail: %v", err)
+		log.Printf("Erreur rendu template detail: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}

@@ -15,7 +15,7 @@ func RandomHandler(w http.ResponseWriter, r *http.Request) {
 	// Afficher la page avec le bouton
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/random.html")
 	if err != nil {
-		log.Printf("❌ Erreur chargement template random: %v", err)
+		log.Printf("Erreur chargement template random: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}
@@ -29,7 +29,7 @@ func RandomHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
-		log.Printf("❌ Erreur rendu template random: %v", err)
+		log.Printf("Erreur rendu template random: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}
@@ -44,7 +44,7 @@ func GetRandomCharacterID(w http.ResponseWriter, r *http.Request) {
 	apiService := services.GetAPIService()
 	characters, err := apiService.GetAllCharacters()
 	if err != nil {
-		log.Printf("❌ Erreur récupération personnages: %v", err)
+		log.Printf("Erreur récupération personnages: %v", err)
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}

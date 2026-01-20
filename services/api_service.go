@@ -29,7 +29,7 @@ func InitAPIService() {
 			Timeout: 10 * time.Second, // Timeout de 10 secondes
 		},
 	}
-	log.Println("✅ API Service initialisé")
+	log.Println("API Service initialisé")
 }
 
 // GetAPIService retourne l'instance du service API
