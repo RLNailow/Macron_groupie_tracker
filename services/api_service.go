@@ -66,60 +66,87 @@ func (s *APIService) GetAllCharacters() ([]models.Character, error) {
 
 // GetCharacterByID récupère un personnage spécifique par son ID
 func (s *APIService) GetCharacterByID(id int) (*models.Character, error) {
-	url := fmt.Sprintf("%s/characters/%d", BaseURL, id)
-
-	resp, err := s.client.Get(url)
+	// Récupérer tous les personnages et chercher par ID
+	// (Plus fiable que l'endpoint /characters/{id} qui semble bugué)
+	characters, err := s.GetAllCharacters()
 	if err != nil {
-		return nil, fmt.Errorf("erreur requête API: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusNotFound {
-		return nil, fmt.Errorf("personnage non trouvé")
+		return nil, err
 	}
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("API error: status %d", resp.StatusCode)
+	// Chercher le personnage par ID
+	for _, char := range characters {
+		if char.ID == id {
+			return &char, nil
+		}
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("erreur lecture réponse: %w", err)
-	}
-
-	var character models.Character
-	if err := json.Unmarshal(body, &character); err != nil {
-		return nil, fmt.Errorf("erreur parsing JSON: %w", err)
-	}
-
-	return &character, nil
+	return nil, fmt.Errorf("personnage non trouvé")
 }
 
-// GetBreathingTechniques récupère tous les styles de combat
+// GetBreathingTechniques extrait les styles de combat depuis les descriptions des personnages
 func (s *APIService) GetBreathingTechniques() ([]models.BreathingTechnique, error) {
-	url := fmt.Sprintf("%s/breathing-techniques", BaseURL)
-
-	resp, err := s.client.Get(url)
+	// Récupérer tous les personnages
+	characters, err := s.GetAllCharacters()
 	if err != nil {
-		return nil, fmt.Errorf("erreur requête API: %w", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("API error: status %d", resp.StatusCode)
+		return nil, err
 	}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, fmt.Errorf("erreur lecture réponse: %w", err)
+	// Map pour stocker les styles uniques
+	stylesMap := make(map[string]bool)
+
+	// Extraire les styles depuis les descriptions
+	for _, char := range characters {
+		if char.Description != "" {
+			// Chercher "X Breathing" dans la description
+			// Patterns courants : "Water Breathing", "Thunder Breathing", etc.
+			description := char.Description
+
+			// Liste des styles connus
+			knownStyles := []string{
+				"Water Breathing", "Thunder Breathing", "Flame Breathing",
+				"Wind Breathing", "Stone Breathing", "Mist Breathing",
+				"Serpent Breathing", "Insect Breathing", "Sound Breathing",
+				"Moon Breathing", "Sun Breathing", "Beast Breathing",
+				"Flower Breathing", "Love Breathing",
+			}
+
+			for _, style := range knownStyles {
+				if contains(description, style) {
+					stylesMap[style] = true
+				}
+			}
+		}
 	}
 
-	var apiResp models.BreathingTechniquesResponse
-	if err := json.Unmarshal(body, &apiResp); err != nil {
-		return nil, fmt.Errorf("erreur parsing JSON: %w", err)
+	// Convertir en slice
+	var techniques []models.BreathingTechnique
+	id := 1
+	for style := range stylesMap {
+		techniques = append(techniques, models.BreathingTechnique{
+			ID:          id,
+			Name:        style,
+			Description: "",
+		})
+		id++
 	}
 
-	return apiResp.Content, nil
+	return techniques, nil
+}
+
+// contains vérifie si une chaîne contient une sous-chaîne (case-insensitive)
+func contains(s, substr string) bool {
+	return len(s) >= len(substr) &&
+		(s == substr || len(s) > len(substr) &&
+			indexOf(s, substr) >= 0)
+}
+
+func indexOf(s, substr string) int {
+	for i := 0; i <= len(s)-len(substr); i++ {
+		if s[i:i+len(substr)] == substr {
+			return i
+		}
+	}
+	return -1
 }
 
 // GetUniqueRaces extrait toutes les races uniques depuis les personnages

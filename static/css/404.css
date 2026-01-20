@@ -1,30 +1,41 @@
-/* ========== 404 PAGE ========== */
-.error-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 80px 40px;
-    text-align: center;
-    min-height: calc(100vh - 100px);
+/* ========== 404 PAGE - FOND BLANC SIMPLE ========== */
+
+/* Surcharger le fond du body pour cette page */
+body:has(.error-container-404) {
+    background: white !important;
+}
+
+body:has(.error-container-404) .main-content {
+    background: white;
+}
+
+.error-container-404 {
+    width: 100%;
+    height: calc(100vh - 100px);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 40px;
+    gap: 80px;
+    background: white;
 }
 
-/* 4 🔥 4 */
-.error-404 {
+/* Ligne du haut : 4 [Image] 4 */
+.error-row {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
-    font-size: 120px;
-    font-weight: bold;
-    color: #1a1a1a;
+    gap: 30px;
 }
 
+/* Les chiffres 4 */
 .error-digit {
-    animation: bounce 1s ease-in-out infinite;
+    font-size: 200px;
+    font-weight: bold;
+    color: #1a1a1a;
+    font-family: 'Questrial', sans-serif;
+    line-height: 1;
+    animation: bounce 1.5s ease-in-out infinite;
 }
 
 .error-digit:first-child {
@@ -32,54 +43,38 @@
 }
 
 .error-digit:last-child {
-    animation-delay: 0.2s;
+    animation-delay: 0.3s;
 }
 
-/* Image Tanjiro en feu */
-.error-fire {
-    width: 150px;
-    height: 150px;
+/* Image Tanjiro en feu (entre les 4) */
+.error-fire-img {
+    width: 180px;
+    height: 180px;
     object-fit: contain;
-    animation: fireRotate 2s ease-in-out infinite;
+    animation: fireShake 2s ease-in-out infinite;
 }
 
-/* Section "Sorry..." */
-.error-sorry {
-    position: relative;
-    margin-top: 20px;
+/* Ligne du bas : [Image Sorry] + "Sorry..." */
+.sorry-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
 }
 
-.error-sorry img {
+/* Image Tanjiro allongé */
+.sorry-img {
     width: 200px;
     height: auto;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    object-fit: contain;
 }
 
+/* Texte "Sorry..." */
 .sorry-text {
-    position: absolute;
-    bottom: -40px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 24px;
+    font-size: 32px;
     color: #1a1a1a;
-    font-style: italic;
-}
-
-/* Bouton retour à l'accueil */
-.home-link {
-    margin-top: 40px;
-    padding: 15px 40px;
-    background: rgba(58, 78, 68, 0.9);
-    color: white;
-    border-radius: 50px;
-    font-size: 18px;
-    transition: transform 0.3s, background 0.3s;
-}
-
-.home-link:hover {
-    transform: scale(1.05);
-    background: rgba(58, 78, 68, 1);
+    font-family: 'Questrial', sans-serif;
+    margin: 0;
 }
 
 /* ========== ANIMATIONS ========== */
@@ -88,11 +83,11 @@
         transform: translateY(0);
     }
     50% {
-        transform: translateY(-20px);
+        transform: translateY(-30px);
     }
 }
 
-@keyframes fireRotate {
+@keyframes fireShake {
     0%, 100% {
         transform: rotate(-5deg);
     }
@@ -102,53 +97,85 @@
 }
 
 /* ========== RESPONSIVE ========== */
-@media (max-width: 768px) {
-    .error-404 {
-        font-size: 80px;
-        gap: 15px;
+@media (max-width: 1024px) {
+    .error-digit {
+        font-size: 150px;
     }
 
-    .error-fire {
+    .error-fire-img {
+        width: 140px;
+        height: 140px;
+    }
+
+    .sorry-img {
+        width: 160px;
+    }
+
+    .sorry-text {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 768px) {
+    .error-container-404 {
+        gap: 60px;
+    }
+
+    .error-row {
+        gap: 20px;
+    }
+
+    .error-digit {
+        font-size: 120px;
+    }
+
+    .error-fire-img {
         width: 100px;
         height: 100px;
     }
 
-    .error-sorry img {
-        width: 150px;
+    .sorry-row {
+        gap: 20px;
+    }
+
+    .sorry-img {
+        width: 130px;
     }
 
     .sorry-text {
-        font-size: 20px;
-        bottom: -35px;
+        font-size: 24px;
     }
 }
 
 @media (max-width: 480px) {
-    .error-container {
-        padding: 60px 20px;
+    .error-container-404 {
+        gap: 40px;
+        padding: 20px;
     }
 
-    .error-404 {
-        font-size: 60px;
-        gap: 10px;
+    .error-row {
+        gap: 15px;
     }
 
-    .error-fire {
+    .error-digit {
+        font-size: 80px;
+    }
+
+    .error-fire-img {
         width: 80px;
         height: 80px;
     }
 
-    .error-sorry img {
-        width: 120px;
+    .sorry-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .sorry-img {
+        width: 100px;
     }
 
     .sorry-text {
-        font-size: 18px;
-        bottom: -30px;
-    }
-
-    .home-link {
-        padding: 12px 30px;
-        font-size: 16px;
+        font-size: 20px;
     }
 }

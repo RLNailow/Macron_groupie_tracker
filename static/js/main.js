@@ -190,6 +190,34 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
+// ========== FONCTION "CHOOSE FOR ME !" ==========
+async function goToRandomCharacter() {
+    console.log('🔥 Bouton cliqué ! Démarrage...');
+    
+    try {
+        console.log('📡 Appel de /api/random-character...');
+        
+        // Appeler NOTRE API interne pour obtenir un ID aléatoire
+        const response = await fetch('/api/random-character');
+        
+        console.log('📥 Réponse reçue:', response.status);
+        
+        if (!response.ok) {
+            throw new Error('Erreur lors de la récupération d\'un personnage aléatoire');
+        }
+        
+        const data = await response.json();
+        console.log('✅ Données reçues:', data);
+        
+        // Rediriger vers la page de détail
+        console.log('🚀 Redirection vers /characters/' + data.id);
+        window.location.href = `/characters/${data.id}`;
+    } catch (error) {
+        console.error('❌ ERREUR:', error);
+        alert('Erreur lors de la sélection d\'un personnage aléatoire: ' + error.message);
+    }
+}
+
 // ========== LOGS DE DEBUG ==========
 console.log('🔥 Demon Slayer App - JavaScript chargé !');
 console.log('📍 Page actuelle:', window.location.pathname);

@@ -1,87 +1,109 @@
+/* ========== CHARACTER DETAIL PAGE ========== */
+.detail-page-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px;
+    position: relative;
+}
+
 /* Bouton retour en haut à gauche */
 .back-btn-detail {
+    position: absolute;
+    top: 20px;
+    left: 20px;
     font-size: 48px;
     background: none;
     border: none;
     color: #1a1a1a;
-    margin-bottom: 30px;
+    cursor: pointer;
     transition: transform 0.3s;
+    z-index: 10;
 }
 
 .back-btn-detail:hover {
     transform: translateX(-10px);
 }
 
-/* Contenu principal : image + infos */
-.detail-content {
+/* Titre : Nom du personnage */
+.detail-page-title {
+    font-size: 48px;
+    text-align: center;
+    margin: 40px 0 60px 0;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #1a1a1a;
+    font-family: 'Questrial', sans-serif;
+}
+
+/* Contenu principal : Image + Infos */
+.detail-main-content {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 60px;
     align-items: start;
 }
 
-/* Image du personnage */
-.detail-image {
+/* Colonne gauche : Image */
+.detail-left {
+    display: flex;
+    justify-content: center;
+}
+
+.character-image-box {
     background: rgba(58, 78, 68, 0.8);
     padding: 40px;
     border-radius: 10px;
-    text-align: center;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-.detail-image img {
+.character-image-box img {
     max-width: 100%;
     max-height: 500px;
     border-radius: 10px;
+    display: block;
 }
 
-/* Infos du personnage */
-.detail-info {
+/* Colonne droite : Infos */
+.detail-right {
     display: flex;
     flex-direction: column;
     gap: 30px;
 }
 
-/* Box d'info */
-.info-box {
+/* Cartes d'information */
+.info-card {
     background: rgba(255, 255, 255, 0.9);
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.info-box h1 {
-    font-size: 36px;
-    text-align: center;
-    margin: 0;
-}
-
-.info-box h3 {
+.info-title {
     font-size: 24px;
     margin-bottom: 15px;
     color: #1a1a1a;
+    font-family: 'Questrial', sans-serif;
 }
 
-.info-box p {
+.info-text {
     font-size: 18px;
     line-height: 1.6;
     color: #333;
+    font-family: 'Questrial', sans-serif;
 }
 
-/* Nom du personnage (titre spécial) */
-.detail-name {
-    background: linear-gradient(135deg, rgba(220, 20, 60, 0.2), rgba(255, 255, 255, 0.9));
+/* Citation (sans titre "Race" ou "Style de combat") */
+.info-card:first-child .info-title {
+    margin-bottom: 0;
+    font-style: italic;
 }
 
 /* Bouton "CHOOSE FOR ME !" vertical à droite */
-.random-form {
+.choose-me-vertical-btn {
     position: fixed;
     right: 40px;
     top: 50%;
     transform: translateY(-50%);
-}
-
-.choose-me-btn {
+    z-index: 100;
     writing-mode: vertical-rl;
     text-orientation: mixed;
     background: rgba(90, 122, 111, 0.9);
@@ -91,53 +113,63 @@
     font-size: 20px;
     border-radius: 50px;
     letter-spacing: 3px;
+    font-family: 'Questrial', sans-serif;
+    cursor: pointer;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s, background 0.3s;
 }
 
-.choose-me-btn:hover {
+.choose-me-vertical-btn:hover {
     transform: translateY(-50%) scale(1.05);
     background: rgba(90, 122, 111, 1);
 }
 
 /* ========== RESPONSIVE ========== */
 @media (max-width: 900px) {
-    .detail-content {
+    .detail-main-content {
         grid-template-columns: 1fr;
-        gap: 30px;
+        gap: 40px;
     }
 
-    .random-form {
+    .choose-me-vertical-btn {
         position: static;
         transform: none;
-        margin-top: 30px;
-    }
-
-    .choose-me-btn {
         writing-mode: horizontal-tb;
         width: 100%;
         padding: 20px;
+        margin-top: 40px;
     }
 }
 
 @media (max-width: 600px) {
-    .detail-container {
+    .detail-page-container {
         padding: 20px;
     }
 
     .back-btn-detail {
         font-size: 36px;
+        top: 10px;
+        left: 10px;
     }
 
-    .info-box h1 {
-        font-size: 28px;
+    .detail-page-title {
+        font-size: 32px;
+        margin: 30px 0 40px 0;
     }
 
-    .info-box h3 {
+    .character-image-box {
+        padding: 20px;
+    }
+
+    .info-card {
+        padding: 20px;
+    }
+
+    .info-title {
         font-size: 20px;
     }
 
-    .info-box p {
+    .info-text {
         font-size: 16px;
     }
 }

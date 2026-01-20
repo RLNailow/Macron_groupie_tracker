@@ -33,11 +33,14 @@ func main() {
 
 	// Pages principales (accessibles sans login)
 	router.HandleFunc("/characters", handlers.CharactersHandler).Methods("GET")
-	router.HandleFunc("/characters/{id:[0-9]+}", handlers.CharacterDetailHandler).Methods("GET")
+	router.HandleFunc("/characters/{id:[0-9]+}", handlers.DetailHandler).Methods("GET")
 	router.HandleFunc("/races", handlers.RacesHandler).Methods("GET")
 	router.HandleFunc("/combat-styles", handlers.CombatStylesHandler).Methods("GET")
 	router.HandleFunc("/quotes", handlers.QuotesHandler).Methods("GET")
 	router.HandleFunc("/random", handlers.RandomHandler).Methods("GET")
+
+	// API interne pour obtenir un ID aléatoire
+	router.HandleFunc("/api/random-character", handlers.GetRandomCharacterID).Methods("GET")
 
 	// ==================== ROUTES PROTÉGÉES ====================
 	// (Si tu veux ajouter des favoris plus tard, on les protège ici)

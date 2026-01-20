@@ -8,6 +8,9 @@ import (
 
 // ErrorHandler affiche la page 404
 func ErrorHandler(w http.ResponseWriter, r *http.Request) {
+	// Définir le status code à 404 EN PREMIER
+	w.WriteHeader(http.StatusNotFound)
+
 	// Charger le template 404
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/404.html")
 	if err != nil {
@@ -15,9 +18,6 @@ func ErrorHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}
-
-	// Définir le status code à 404
-	w.WriteHeader(http.StatusNotFound)
 
 	// Données à passer au template
 	data := struct {
@@ -31,7 +31,5 @@ func ErrorHandler(w http.ResponseWriter, r *http.Request) {
 	// Rendre le template
 	if err := tmpl.ExecuteTemplate(w, "layout", data); err != nil {
 		log.Printf("❌ Erreur rendu template 404: %v", err)
-		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
-		return
 	}
 }

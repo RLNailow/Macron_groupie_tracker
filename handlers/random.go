@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"API-demon-slayyyyy-/services"
-	"fmt"
+	"encoding/json"
 	"html/template"
 	"log"
 	"math/rand"
@@ -12,13 +12,7 @@ import (
 
 // RandomHandler affiche la page "aléatoire" avec le bouton "CHOOSE FOR ME"
 func RandomHandler(w http.ResponseWriter, r *http.Request) {
-	// Si c'est une requête POST, rediriger vers un personnage aléatoire
-	if r.Method == "POST" {
-		redirectToRandomCharacter(w, r)
-		return
-	}
-
-	// Sinon, afficher la page avec le bouton
+	// Afficher la page avec le bouton
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/random.html")
 	if err != nil {
 		log.Printf("❌ Erreur chargement template random: %v", err)
@@ -41,8 +35,11 @@ func RandomHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// redirectToRandomCharacter redirige vers un personnage aléatoire
-func redirectToRandomCharacter(w http.ResponseWriter, r *http.Request) {
+// getUserFromCookie est déjà définie dans auth.go
+// (tous les fichiers du package handlers partagent les fonctions)
+
+// GetRandomCharacterID retourne l'ID d'un personnage aléatoire (API interne)
+func GetRandomCharacterID(w http.ResponseWriter, r *http.Request) {
 	// Récupérer tous les personnages
 	apiService := services.GetAPIService()
 	characters, err := apiService.GetAllCharacters()
@@ -52,12 +49,19 @@ func redirectToRandomCharacter(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if len(characters) == 0 {
+		http.Error(w, "Aucun personnage trouvé", http.StatusNotFound)
+		return
+	}
+
 	// Sélectionner un personnage aléatoire
 	rand.Seed(time.Now().UnixNano())
 	randomIndex := rand.Intn(len(characters))
 	randomCharacter := characters[randomIndex]
 
-	// Rediriger vers la page de détail du personnage
-	redirectURL := fmt.Sprintf("/characters/%d", randomCharacter.ID)
-	http.Redirect(w, r, redirectURL, http.StatusSeeOther)
+	// Retourner l'ID en JSON
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]int{
+		"id": randomCharacter.ID,
+	})
 }

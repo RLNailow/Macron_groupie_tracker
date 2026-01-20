@@ -1,3 +1,4 @@
+{{define "layout"}}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -13,7 +14,7 @@
     <!-- CSS Global -->
     <link rel="stylesheet" href="/static/css/main.css">
     
-    <!-- CSS spécifique à la page (chargé dynamiquement) -->
+    <!-- CSS spécifique à la page -->
     {{block "page-css" .}}{{end}}
 </head>
 <body>
@@ -49,7 +50,7 @@
 
     <!-- Contenu principal de la page -->
     <main class="main-content">
-        {{block "content" .}}{{end}}
+        {{template "content" .}}
     </main>
 
     <!-- Sidebar Menu -->
@@ -99,3 +100,4 @@
     {{block "page-js" .}}{{end}}
 </body>
 </html>
+{{end}}
