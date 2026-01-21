@@ -1,0 +1,168 @@
+/* ========== FAVORITES PAGE ========== */
+
+
+.favorites-section {
+    margin-bottom: 60px;
+}
+
+.section-title {
+    font-size: 32px;
+    margin-bottom: 30px;
+    color: #1a1a1a;
+    border-bottom: 2px solid #1a1a1a;
+    padding-bottom: 10px;
+}
+
+/* Grille pour personnages et citations */
+.favorites-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 30px;
+}
+
+.favorite-item {
+    position: relative;
+}
+
+.favorite-card {
+    display: block;
+    background: rgba(58, 78, 68, 0.8);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-decoration: none;
+}
+
+.favorite-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.favorite-image {
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+}
+
+.favorite-name {
+    padding: 15px;
+    text-align: center;
+    color: white;
+    font-weight: bold;
+}
+
+/* Citations */
+.favorite-card.quote-card {
+    background: white;
+    padding: 20px;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.quote-text {
+    font-style: italic;
+    color: #1a1a1a;
+    margin-bottom: 10px;
+}
+
+.quote-author {
+    font-weight: bold;
+    color: #5a7a6f;
+    text-align: right;
+}
+
+/* Bouton supprimer favori */
+.remove-favorite-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform 0.3s;
+    z-index: 10;
+}
+
+.remove-favorite-btn:hover {
+    transform: scale(1.2);
+}
+
+/* Liste pour styles et races */
+.favorites-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.favorite-list-item {
+    background: rgba(58, 78, 68, 0.8);
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.favorite-list-name {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.remove-favorite-btn-small {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.remove-favorite-btn-small:hover {
+    transform: scale(1.2);
+}
+
+/* Message aucun favori */
+.no-favorites {
+    text-align: center;
+    padding: 100px 20px;
+    font-size: 20px;
+    color: #666;
+}
+
+.no-favorites p {
+    margin: 10px 0;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 1200px) {
+    .favorites-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .favorites-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .favorites-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .section-title {
+        font-size: 24px;
+    }
+}

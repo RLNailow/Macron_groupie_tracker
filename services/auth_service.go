@@ -166,3 +166,18 @@ func (s *AuthService) saveUsers() error {
 
 	return os.WriteFile(UsersFilePath, data, 0644)
 }
+
+// UpdateUser met à jour un utilisateur existant
+func (s *AuthService) UpdateUser(user *models.User) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	for i, u := range s.usersData.Users {
+		if u.ID == user.ID {
+			s.usersData.Users[i] = *user
+			return s.saveUsers()
+		}
+	}
+
+	return ErrUserNotFound
+}

@@ -66,6 +66,9 @@
             <a href="/combat-styles" class="menu-item">Styles de combat</a>
             <a href="/quotes" class="menu-item">Citations</a>
             <a href="/random" class="menu-item">Aléatoire</a>
+            {{if .User}}
+            <a href="/favorites" class="menu-item menu-item-favorites">❤️ Mes Favoris</a>
+            {{end}}
         </nav>
 
         {{if .User}}

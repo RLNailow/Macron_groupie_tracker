@@ -7,8 +7,15 @@
     <!-- Bouton retour en haut à gauche -->
     <button class="back-btn-detail" onclick="history.back()">←</button>
 
-    <!-- Titre : Nom du personnage -->
-    <h1 class="detail-page-title">{{.Character.Name}}</h1>
+    <!-- Titre : Nom du personnage avec bouton favori -->
+    <div class="detail-title-container">
+        <h1 class="detail-page-title">{{.Character.Name}}</h1>
+        {{if .User}}
+        <button class="favorite-btn" data-favorite-type="character" data-favorite-value="{{.Character.ID}}" onclick="addFavorite('character', '{{.Character.ID}}')">
+            🤍
+        </button>
+        {{end}}
+    </div>
 
     <!-- Contenu principal : Image à gauche + Infos à droite -->
     <div class="detail-main-content">
@@ -21,22 +28,43 @@
 
         <!-- Informations (droite) -->
         <div class="detail-right">
-            <!-- Citation -->
+            <!-- Citation avec bouton favori -->
             {{if .Character.Quote}}
             <div class="info-card">
-                <h3 class="info-title">"{{.Character.Quote}}"</h3>
+                <div class="info-header">
+                    <h3 class="info-title">"{{.Character.Quote}}"</h3>
+                    {{if .User}}
+                    <button class="favorite-btn-small" data-favorite-type="quote" data-favorite-value="{{.Character.ID}}" onclick="addFavorite('quote', '{{.Character.ID}}')">
+                        🤍
+                    </button>
+                    {{end}}
+                </div>
             </div>
             {{end}}
 
-            <!-- Race -->
+            <!-- Race avec bouton favori -->
             <div class="info-card">
-                <h3 class="info-title">Race</h3>
+                <div class="info-header">
+                    <h3 class="info-title">Race</h3>
+                    {{if .User}}
+                    <button class="favorite-btn-small" data-favorite-type="race" data-favorite-value="{{.Character.Race}}" onclick="addFavorite('race', '{{.Character.Race}}')">
+                        🤍
+                    </button>
+                    {{end}}
+                </div>
                 <p class="info-text">{{.Character.Race}}</p>
             </div>
 
-            <!-- Style de combat -->
+            <!-- Style de combat avec bouton favori -->
             <div class="info-card">
-                <h3 class="info-title">Style de combat</h3>
+                <div class="info-header">
+                    <h3 class="info-title">Style de combat</h3>
+                    {{if .User}}
+                    <button class="favorite-btn-small" data-favorite-type="combat_style" data-favorite-value="{{.CombatStyle}}" onclick="addFavorite('combat_style', '{{.CombatStyle}}')">
+                        🤍
+                    </button>
+                    {{end}}
+                </div>
                 <p class="info-text">{{.CombatStyle}}</p>
             </div>
         </div>
@@ -46,6 +74,7 @@
     <button class="choose-me-vertical-btn" onclick="goToRandomCharacter()">CHOOSE FOR ME !</button>
 </div>
 
+<script src="/static/js/favorites.js"></script>
 <script>
 // Fonction embarquée pour garantir qu'elle soit disponible
 async function goToRandomCharacter() {

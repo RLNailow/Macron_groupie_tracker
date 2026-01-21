@@ -8,7 +8,7 @@
     margin-bottom: 40px;
 }
 
-/* Carte style de combat */
+/* Carte style de combat - maintenant cliquable */
 .style-card {
     background: rgba(58, 78, 68, 0.8);
     padding: 30px 20px;
@@ -21,7 +21,8 @@
     justify-content: center;
     gap: 15px;
     transition: transform 0.3s, box-shadow 0.3s;
-    cursor: default;
+    cursor: pointer;
+    text-decoration: none;
 }
 
 .style-card:hover {

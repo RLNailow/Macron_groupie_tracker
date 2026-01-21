@@ -1,156 +1,233 @@
-// ========== RECHERCHE DE PERSONNAGES ==========
+// ========== RECHERCHE SIMPLIFIÉE ==========
 
-// Cache pour stocker les personnages (évite de refaire l'API call)
-let cachedCharacters = null;
+let allCharacters = [];
+let allStyles = [];
 
-// Charger tous les personnages au chargement de la page
-async function loadAllCharacters() {
-    if (cachedCharacters) {
-        return cachedCharacters; // Utiliser le cache si disponible
-    }
-    
+// Charger les personnages
+async function loadCharacters() {
     try {
         const response = await fetch('https://www.demonslayer-api.com/api/v1/characters?limit=100');
         const data = await response.json();
-        cachedCharacters = data.content || [];
-        console.log('✅ Personnages chargés:', cachedCharacters.length);
-        return cachedCharacters;
+        allCharacters = data.content || [];
+        console.log('✅ Personnages chargés:', allCharacters.length);
     } catch (error) {
         console.error('❌ Erreur chargement personnages:', error);
-        return [];
+        allCharacters = [];
     }
 }
 
-// Fonction de recherche
-async function searchCharacters(query) {
-    if (!query || query.length < 2) {
-        return []; // Minimum 2 caractères
+// Charger les styles de combat depuis l'API
+async function loadStyles() {
+    try {
+        const response = await fetch('https://www.demonslayer-api.com/api/v1/combat-styles?limit=100');
+        const data = await response.json();
+        allStyles = data.content || [];
+        console.log('✅ Styles de combat chargés:', allStyles.length);
+    } catch (error) {
+        console.error('❌ Erreur chargement styles:', error);
+        allStyles = [];
     }
-    
-    const characters = await loadAllCharacters();
-    const lowerQuery = query.toLowerCase();
-    
-    // Filtrer les personnages dont le nom contient la recherche
-    const results = characters.filter(char => 
-        char.name && char.name.toLowerCase().includes(lowerQuery)
-    );
-    
-    return results.slice(0, 5); // Maximum 5 résultats
 }
 
-// Afficher les résultats de recherche
-function displaySearchResults(results) {
-    const searchResults = document.getElementById('searchResults');
+// Rechercher
+function search(query) {
+    if (!query || query.length < 1) return [];
     
-    if (!searchResults) return;
+    const q = query.toLowerCase();
+    const results = [];
     
-    // Si aucun résultat
+    // Est-ce un ID ?
+    const isNumber = /^\d+$/.test(query);
+    
+    if (isNumber) {
+        const id = parseInt(query);
+        
+        // Chercher personnage par ID
+        const char = allCharacters.find(c => c.id === id);
+        if (char) {
+            results.push({
+                type: 'char',
+                name: char.name,
+                img: char.img,
+                url: `/characters/${char.id}`
+            });
+        }
+        
+        // Chercher style par ID
+        const style = allStyles.find(s => s.id === id);
+        if (style) {
+            results.push({
+                type: 'style',
+                name: style.name,
+                url: `/combat-styles/${encodeURIComponent(style.name)}`
+            });
+        }
+    }
+    
+    // Chercher par nom dans personnages
+    allCharacters.forEach(char => {
+        if (char.name && char.name.toLowerCase().includes(q) && results.length < 5) {
+            results.push({
+                type: 'char',
+                name: char.name,
+                img: char.img,
+                url: `/characters/${char.id}`
+            });
+        }
+    });
+    
+    // Chercher par nom dans styles
+    allStyles.forEach(style => {
+        if (style.name && style.name.toLowerCase().includes(q) && results.length < 8) {
+            results.push({
+                type: 'style',
+                name: style.name,
+                url: `/combat-styles/${encodeURIComponent(style.name)}`
+            });
+        }
+    });
+    
+    // Chercher dans citations
+    allCharacters.forEach(char => {
+        if (char.quote && char.quote.toLowerCase().includes(q) && results.length < 8) {
+            results.push({
+                type: 'quote',
+                name: char.name,
+                quote: char.quote,
+                img: char.img,
+                url: `/characters/${char.id}`
+            });
+        }
+    });
+    
+    return results.slice(0, 8);
+}
+
+// Afficher résultats
+function showResults(results) {
+    const div = document.getElementById('searchResults');
+    if (!div) return;
+    
     if (results.length === 0) {
-        searchResults.innerHTML = `
-            <div class="search-no-results">
-                Aucun personnage trouvé
-            </div>
-        `;
-        searchResults.classList.add('active');
+        div.innerHTML = '<div class="search-no-results">Aucun résultat</div>';
+        div.classList.add('active');
         return;
     }
     
-    // Afficher les résultats
-    searchResults.innerHTML = results.map(char => `
-        <a href="/characters/${char.id}" class="search-result-item">
-            <img src="${char.img}" alt="${char.name}" class="search-result-img">
-            <div>
-                <div class="search-result-name">${char.name}</div>
-                <div class="search-result-race">${char.race || 'Inconnu'}</div>
-            </div>
-        </a>
-    `).join('');
+    let html = '';
+    results.forEach(r => {
+        if (r.type === 'char') {
+            html += `
+                <a href="${r.url}" class="search-result-item">
+                    <img src="${r.img}" class="search-result-img" alt="${r.name}">
+                    <div>
+                        <div class="search-result-name">${r.name}</div>
+                        <div class="search-result-race">Personnage</div>
+                    </div>
+                </a>
+            `;
+        } else if (r.type === 'style') {
+            html += `
+                <a href="${r.url}" class="search-result-item">
+                    <div style="width:50px;height:50px;border-radius:50%;background:rgba(58,78,68,0.8);display:flex;align-items:center;justify-content:center;font-size:24px;">⚔️</div>
+                    <div>
+                        <div class="search-result-name">${r.name}</div>
+                        <div class="search-result-race">Style de combat</div>
+                    </div>
+                </a>
+            `;
+        } else if (r.type === 'quote') {
+            const short = r.quote.length > 50 ? r.quote.substring(0, 50) + '...' : r.quote;
+            html += `
+                <a href="${r.url}" class="search-result-item">
+                    <img src="${r.img}" class="search-result-img" alt="${r.name}">
+                    <div>
+                        <div class="search-result-name">"${short}"</div>
+                        <div class="search-result-race">Citation - ${r.name}</div>
+                    </div>
+                </a>
+            `;
+        }
+    });
     
-    searchResults.classList.add('active');
+    div.innerHTML = html;
+    div.classList.add('active');
 }
 
-// Cacher les résultats
-function hideSearchResults() {
-    const searchResults = document.getElementById('searchResults');
-    if (searchResults) {
-        setTimeout(() => {
-            searchResults.classList.remove('active');
-        }, 200); // Petit délai pour permettre le clic sur un résultat
+// Cacher résultats
+function hideResults() {
+    const div = document.getElementById('searchResults');
+    if (div) {
+        setTimeout(() => div.classList.remove('active'), 200);
     }
 }
 
-// ========== EVENT LISTENERS ==========
-document.addEventListener('DOMContentLoaded', () => {
-    const searchInput = document.getElementById('searchInput');
-    const searchResults = document.getElementById('searchResults');
+// Init
+document.addEventListener('DOMContentLoaded', async () => {
+    const input = document.getElementById('searchInput');
+    const resultsDiv = document.getElementById('searchResults');
     
-    if (!searchInput) return; // Pas de barre de recherche sur cette page
+    if (!input) {
+        console.log('Pas de recherche sur cette page');
+        return;
+    }
     
-    // Précharger les personnages au chargement de la page
-    loadAllCharacters();
+    console.log('🔍 Recherche activée');
     
-    // Event: Saisie dans la barre de recherche
-    searchInput.addEventListener('input', async (e) => {
+    // Charger données
+    await loadCharacters();
+    await loadStyles();
+    
+    // Input
+    input.addEventListener('input', async (e) => {
         const query = e.target.value;
-        
-        if (query.length < 2) {
-            hideSearchResults();
+        if (query.length < 1) {
+            hideResults();
             return;
         }
-        
-        // Rechercher et afficher les résultats
-        const results = await searchCharacters(query);
-        displaySearchResults(results);
+        const results = search(query);
+        showResults(results);
     });
     
-    // Event: Perte de focus (cacher les résultats)
-    searchInput.addEventListener('blur', () => {
-        hideSearchResults();
-    });
-    
-    // Event: Focus (réafficher les résultats si recherche en cours)
-    searchInput.addEventListener('focus', async (e) => {
-        const query = e.target.value;
-        if (query.length >= 2) {
-            const results = await searchCharacters(query);
-            displaySearchResults(results);
+    // Focus
+    input.addEventListener('focus', (e) => {
+        if (e.target.value.length >= 1) {
+            const results = search(e.target.value);
+            showResults(results);
         }
     });
     
-    // Event: Touche Entrée (aller au premier résultat)
-    searchInput.addEventListener('keydown', async (e) => {
+    // Blur
+    input.addEventListener('blur', hideResults);
+    
+    // Enter
+    input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
-            const query = searchInput.value;
-            
-            if (query.length >= 2) {
-                const results = await searchCharacters(query);
-                if (results.length > 0) {
-                    // Rediriger vers le premier résultat
-                    window.location.href = `/characters/${results[0].id}`;
-                }
+            const results = search(input.value);
+            if (results.length > 0) {
+                window.location.href = results[0].url;
             }
         }
     });
     
-    // Event: Clic en dehors de la recherche (fermer les résultats)
+    // Click outside
     document.addEventListener('click', (e) => {
-        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-            hideSearchResults();
+        if (!input.contains(e.target) && resultsDiv && !resultsDiv.contains(e.target)) {
+            hideResults();
         }
     });
 });
 
-// ========== STYLES POUR LES RÉSULTATS (ajout dynamique) ==========
-// Ajouter un style CSS pour l'élément .search-result-race
-const style = document.createElement('style');
-style.textContent = `
+// Style
+const css = document.createElement('style');
+css.textContent = `
     .search-result-race {
         font-size: 12px;
         color: #666;
         margin-top: 2px;
     }
 `;
-document.head.appendChild(style);
+document.head.appendChild(css);
 
 console.log('🔍 Module de recherche chargé');

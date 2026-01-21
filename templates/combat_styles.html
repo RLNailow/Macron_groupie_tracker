@@ -6,15 +6,12 @@
 <div class="page-container">
     <h1 class="page-title">Styles de combat</h1>
 
-    <!-- Grille des styles (5 par ligne) -->
+    <!-- Grille des styles (5 par ligne) - chaque style redirige vers un personnage -->
     <div class="styles-grid">
         {{range .Styles}}
-        <div class="style-card">
+        <a href="/characters/{{.CharacterID}}" class="style-card">
             <div class="style-name">{{.Name}}</div>
-            {{if .Description}}
-            <div class="style-description">{{.Description}}</div>
-            {{end}}
-        </div>
+        </a>
         {{end}}
     </div>
 

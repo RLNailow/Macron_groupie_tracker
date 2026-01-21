@@ -29,7 +29,7 @@ func InitAPIService() {
 			Timeout: 10 * time.Second, // Timeout de 10 secondes
 		},
 	}
-	log.Println("API Service initialisé")
+	log.Println("✅ API Service initialisé")
 }
 
 // GetAPIService retourne l'instance du service API
@@ -67,7 +67,6 @@ func (s *APIService) GetAllCharacters() ([]models.Character, error) {
 // GetCharacterByID récupère un personnage spécifique par son ID
 func (s *APIService) GetCharacterByID(id int) (*models.Character, error) {
 	// Récupérer tous les personnages et chercher par ID
-	// (Plus fiable que l'endpoint /characters/{id} qui semble bugué)
 	characters, err := s.GetAllCharacters()
 	if err != nil {
 		return nil, err
@@ -83,70 +82,33 @@ func (s *APIService) GetCharacterByID(id int) (*models.Character, error) {
 	return nil, fmt.Errorf("personnage non trouvé")
 }
 
-// GetBreathingTechniques extrait les styles de combat depuis les descriptions des personnages
+// GetBreathingTechniques récupère tous les styles de combat depuis l'API
 func (s *APIService) GetBreathingTechniques() ([]models.BreathingTechnique, error) {
-	// Récupérer tous les personnages
-	characters, err := s.GetAllCharacters()
+	url := fmt.Sprintf("%s/combat-styles?limit=100", BaseURL)
+
+	resp, err := s.client.Get(url)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("erreur requête API combat-styles: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("API error: status %d", resp.StatusCode)
 	}
 
-	// Map pour stocker les styles uniques
-	stylesMap := make(map[string]bool)
-
-	// Extraire les styles depuis les descriptions
-	for _, char := range characters {
-		if char.Description != "" {
-			// Chercher "X Breathing" dans la description
-			// Patterns courants : "Water Breathing", "Thunder Breathing", etc.
-			description := char.Description
-
-			// Liste des styles connus
-			knownStyles := []string{
-				"Water Breathing", "Thunder Breathing", "Flame Breathing",
-				"Wind Breathing", "Stone Breathing", "Mist Breathing",
-				"Serpent Breathing", "Insect Breathing", "Sound Breathing",
-				"Moon Breathing", "Sun Breathing", "Beast Breathing",
-				"Flower Breathing", "Love Breathing",
-			}
-
-			for _, style := range knownStyles {
-				if contains(description, style) {
-					stylesMap[style] = true
-				}
-			}
-		}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("erreur lecture réponse: %w", err)
 	}
 
-	// Convertir en slice
-	var techniques []models.BreathingTechnique
-	id := 1
-	for style := range stylesMap {
-		techniques = append(techniques, models.BreathingTechnique{
-			ID:          id,
-			Name:        style,
-			Description: "",
-		})
-		id++
+	var apiResp models.BreathingTechniquesResponse
+	if err := json.Unmarshal(body, &apiResp); err != nil {
+		return nil, fmt.Errorf("erreur parsing JSON: %w", err)
 	}
 
-	return techniques, nil
-}
+	log.Printf("✅ %d styles de combat récupérés depuis l'API", len(apiResp.Content))
 
-// contains vérifie si une chaîne contient une sous-chaîne (case-insensitive)
-func contains(s, substr string) bool {
-	return len(s) >= len(substr) &&
-		(s == substr || len(s) > len(substr) &&
-			indexOf(s, substr) >= 0)
-}
-
-func indexOf(s, substr string) int {
-	for i := 0; i <= len(s)-len(substr); i++ {
-		if s[i:i+len(substr)] == substr {
-			return i
-		}
-	}
-	return -1
+	return apiResp.Content, nil
 }
 
 // GetUniqueRaces extrait toutes les races uniques depuis les personnages
@@ -189,4 +151,209 @@ func (s *APIService) GetCharactersWithQuotes() ([]models.Character, error) {
 	}
 
 	return withQuotes, nil
+}
+
+// StyleWithCharacter associe un style à un personnage
+type StyleWithCharacter struct {
+	ID          int
+	Name        string
+	CharacterID int
+}
+
+// GetStylesWithCharacters récupère tous les styles avec le personnage qui l'utilise
+func (s *APIService) GetStylesWithCharacters() ([]StyleWithCharacter, error) {
+	// Récupérer tous les styles
+	styles, err := s.GetBreathingTechniques()
+	if err != nil {
+		return nil, err
+	}
+
+	// Récupérer tous les personnages
+	characters, err := s.GetAllCharacters()
+	if err != nil {
+		return nil, err
+	}
+
+	var result []StyleWithCharacter
+
+	// Pour chaque style, trouver le premier personnage qui l'utilise
+	for _, style := range styles {
+		found := false
+
+		// Chercher dans les personnages
+		for _, char := range characters {
+			// Vérifier avec plusieurs stratégies
+			if matchesStyle(char.Description, char.Name, style.Name) {
+				result = append(result, StyleWithCharacter{
+					ID:          style.ID,
+					Name:        style.Name,
+					CharacterID: char.ID,
+				})
+				log.Printf("✅ Style '%s' → %s (ID: %d)", style.Name, char.Name, char.ID)
+				found = true
+				break
+			}
+		}
+
+		// Si aucun personnage trouvé, utiliser le premier personnage (Tanjiro)
+		if !found && len(characters) > 0 {
+			result = append(result, StyleWithCharacter{
+				ID:          style.ID,
+				Name:        style.Name,
+				CharacterID: characters[0].ID,
+			})
+			log.Printf("⚠️  Style '%s' → Tanjiro par défaut", style.Name)
+		}
+	}
+
+	log.Printf("📊 %d styles associés à des personnages", len(result))
+	return result, nil
+}
+
+// matchesStyle vérifie si un personnage correspond à un style avec plusieurs stratégies
+func matchesStyle(description, characterName, styleName string) bool {
+	desc := toLower(description)
+	name := toLower(characterName)
+	style := toLower(styleName)
+
+	// 1. Recherche exacte du nom du style dans la description
+	if contains(desc, style) {
+		return true
+	}
+
+	// 2. Extraire le mot-clé principal du style
+	var mainKeyword string
+	if contains(style, "breathing") {
+		// "Water Breathing" → "water"
+		parts := split(style, " breathing")
+		if len(parts) > 0 {
+			mainKeyword = trim(parts[0])
+		}
+	} else if contains(style, "manipulation") {
+		// "Blood Manipulation" → "blood"
+		parts := split(style, " manipulation")
+		if len(parts) > 0 {
+			mainKeyword = trim(parts[0])
+		}
+	} else if contains(style, "demon art") {
+		mainKeyword = "demon"
+	}
+
+	// 3. Chercher le mot-clé dans description ou nom
+	if mainKeyword != "" && len(mainKeyword) > 3 {
+		if contains(desc, mainKeyword) || contains(name, mainKeyword) {
+			return true
+		}
+	}
+
+	// 4. Mappings spécifiques personnage → style
+	mappings := map[string][]string{
+		"tanjiro":     {"sun breathing", "water breathing", "hinokami"},
+		"giyu":        {"water breathing"},
+		"zenitsu":     {"thunder breathing"},
+		"inosuke":     {"beast breathing"},
+		"shinobu":     {"insect breathing"},
+		"kyojuro":     {"flame breathing"},
+		"rengoku":     {"flame breathing"},
+		"tengen":      {"sound breathing"},
+		"uzui":        {"sound breathing"},
+		"mitsuri":     {"love breathing"},
+		"kanroji":     {"love breathing"},
+		"muichiro":    {"mist breathing"},
+		"tokito":      {"mist breathing"},
+		"gyomei":      {"stone breathing"},
+		"himejima":    {"stone breathing"},
+		"sanemi":      {"wind breathing"},
+		"shinazugawa": {"wind breathing"},
+		"obanai":      {"serpent breathing"},
+		"iguro":       {"serpent breathing"},
+		"kanae":       {"flower breathing"},
+		"kanao":       {"flower breathing"},
+		"yoriichi":    {"sun breathing"},
+		"kokushibo":   {"moon breathing"},
+		"muzan":       {"blood", "demon"},
+		"akaza":       {"destructive death", "demon"},
+		"douma":       {"cryokinesis", "ice", "demon"},
+		"gyutaro":     {"blood", "sickle", "demon"},
+		"daki":        {"obi", "sash", "demon"},
+		"enmu":        {"sleep", "dream", "demon"},
+		"kaigaku":     {"thunder breathing"},
+	}
+
+	for charKeyword, styleKeywords := range mappings {
+		if contains(name, charKeyword) {
+			for _, styleKeyword := range styleKeywords {
+				if contains(style, styleKeyword) {
+					return true
+				}
+			}
+		}
+	}
+
+	return false
+}
+
+// Fonctions utilitaires sans dépendances externes
+func toLower(s string) string {
+	result := ""
+	for _, c := range s {
+		if c >= 'A' && c <= 'Z' {
+			result += string(c + 32)
+		} else {
+			result += string(c)
+		}
+	}
+	return result
+}
+
+func contains(s, substr string) bool {
+	if len(substr) > len(s) {
+		return false
+	}
+	for i := 0; i <= len(s)-len(substr); i++ {
+		match := true
+		for j := 0; j < len(substr); j++ {
+			if s[i+j] != substr[j] {
+				match = false
+				break
+			}
+		}
+		if match {
+			return true
+		}
+	}
+	return false
+}
+
+func split(s, sep string) []string {
+	var result []string
+	start := 0
+	for i := 0; i <= len(s)-len(sep); i++ {
+		match := true
+		for j := 0; j < len(sep); j++ {
+			if s[i+j] != sep[j] {
+				match = false
+				break
+			}
+		}
+		if match {
+			result = append(result, s[start:i])
+			start = i + len(sep)
+			i += len(sep) - 1
+		}
+	}
+	result = append(result, s[start:])
+	return result
+}
+
+func trim(s string) string {
+	start := 0
+	end := len(s)
+	for start < end && (s[start] == ' ' || s[start] == '\t' || s[start] == '\n') {
+		start++
+	}
+	for end > start && (s[end-1] == ' ' || s[end-1] == '\t' || s[end-1] == '\n') {
+		end--
+	}
+	return s[start:end]
 }

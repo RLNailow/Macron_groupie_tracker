@@ -20,7 +20,7 @@
     <!-- Pagination -->
     <div class="pagination">
         {{if .HasPrevious}}
-            <a href="/characters?page={{.PreviousPage}}" class="pagination-btn">Précédent</a>
+            <a href="{{.PrevURL}}" class="pagination-btn">Précédent</a>
         {{else}}
             <button class="pagination-btn" disabled>Précédent</button>
         {{end}}
@@ -28,7 +28,7 @@
         <span class="page-info">Page {{.CurrentPage}} / {{.TotalPages}}</span>
 
         {{if .HasNext}}
-            <a href="/characters?page={{.NextPage}}" class="pagination-btn">Suivant</a>
+            <a href="{{.NextURL}}" class="pagination-btn">Suivant</a>
         {{else}}
             <button class="pagination-btn" disabled>Suivant</button>
         {{end}}

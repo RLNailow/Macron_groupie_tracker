@@ -43,9 +43,11 @@ func main() {
 	router.HandleFunc("/api/random-character", handlers.GetRandomCharacterID).Methods("GET")
 
 	// ==================== ROUTES PROTÉGÉES ====================
-	// (Si tu veux ajouter des favoris plus tard, on les protège ici)
 
-	// Exemple : router.Handle("/favorites", middleware.AuthRequired(http.HandlerFunc(handlers.FavoritesHandler))).Methods("GET")
+	// Favoris (nécessite d'être connecté)
+	router.HandleFunc("/favorites", handlers.FavoritesHandler).Methods("GET")
+	router.HandleFunc("/favorites/add/{type}/{value}", handlers.AddFavoriteHandler).Methods("POST")
+	router.HandleFunc("/favorites/remove/{type}/{value}", handlers.RemoveFavoriteHandler).Methods("POST")
 
 	// ==================== FICHIERS STATIQUES ====================
 
@@ -62,6 +64,10 @@ func main() {
 	log.Println("🔥 Serveur démarré sur http://localhost:8080")
 	log.Println("📁 Fichiers statiques servis depuis /static/")
 	log.Println("🎨 Templates chargés depuis /templates/")
+	log.Println("✅ Nouvelles fonctionnalités:")
+	log.Println("   - Styles de combat cliquables (voir personnages)")
+	log.Println("   - Races cliquables (filtrer par race)")
+	log.Println("   - Recherche améliorée (par ID ou nom)")
 
 	// Lancer le serveur sur le port 8080
 	if err := http.ListenAndServe(":8080", router); err != nil {

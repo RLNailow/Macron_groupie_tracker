@@ -6,12 +6,12 @@
 <div class="page-container">
     <h1 class="page-title">Races</h1>
 
-    <!-- Grille des races (5 par ligne, juste du texte) -->
+    <!-- Grille des races (5 par ligne, maintenant cliquable) -->
     <div class="races-grid">
         {{range .Races}}
-        <div class="race-card">
+        <a href="/characters?race={{.}}" class="race-card">
             <div class="race-name">{{.}}</div>
-        </div>
+        </a>
         {{end}}
     </div>
 

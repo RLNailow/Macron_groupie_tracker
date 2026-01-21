@@ -17,9 +17,9 @@ func CombatStylesHandler(w http.ResponseWriter, r *http.Request) {
 		page = 1
 	}
 
-	// Récupérer tous les styles de combat depuis l'API
+	// Récupérer tous les styles avec leurs personnages
 	apiService := services.GetAPIService()
-	allStyles, err := apiService.GetBreathingTechniques()
+	stylesWithCharacters, err := apiService.GetStylesWithCharacters()
 	if err != nil {
 		log.Printf("Erreur récupération styles de combat: %v", err)
 		http.Error(w, "Erreur chargement des styles de combat", http.StatusInternalServerError)
@@ -27,21 +27,26 @@ func CombatStylesHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Calculer la pagination
-	totalStyles := len(allStyles)
+	totalStyles := len(stylesWithCharacters)
 	totalPages := (totalStyles + ItemsPerPage - 1) / ItemsPerPage
 
-	if page > totalPages {
+	if page > totalPages && totalStyles > 0 {
 		page = totalPages
 	}
 
 	// Extraire les styles de la page actuelle
-	startIndex := (page - 1) * ItemsPerPage
-	endIndex := startIndex + ItemsPerPage
-	if endIndex > totalStyles {
-		endIndex = totalStyles
-	}
+	var stylesOnPage []interface{}
+	if totalStyles > 0 {
+		startIndex := (page - 1) * ItemsPerPage
+		endIndex := startIndex + ItemsPerPage
+		if endIndex > totalStyles {
+			endIndex = totalStyles
+		}
 
-	stylesOnPage := allStyles[startIndex:endIndex]
+		for i := startIndex; i < endIndex; i++ {
+			stylesOnPage = append(stylesOnPage, stylesWithCharacters[i])
+		}
+	}
 
 	// Charger le template
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/combat_styles.html")

@@ -1,0 +1,95 @@
+{{define "page-css"}}
+<link rel="stylesheet" href="/static/css/favorites.css">
+{{end}}
+
+{{define "content"}}
+<div class="page-container">
+    <h1 class="page-title">Mes Favoris</h1>
+
+    <!-- Personnages favoris -->
+    {{if .FavoriteCharacters}}
+    <section class="favorites-section">
+        <h2 class="section-title">Personnages</h2>
+        <div class="favorites-grid">
+            {{range .FavoriteCharacters}}
+            <div class="favorite-item">
+                <a href="/characters/{{.ID}}" class="favorite-card">
+                    <div class="favorite-image" style="background-image: url('{{.Img}}')"></div>
+                    <div class="favorite-name">{{.Name}}</div>
+                </a>
+                <button class="remove-favorite-btn" onclick="removeFavorite('character', '{{.ID}}')">
+                    ❤️
+                </button>
+            </div>
+            {{end}}
+        </div>
+    </section>
+    {{end}}
+
+    <!-- Citations favorites -->
+    {{if .FavoriteQuotes}}
+    <section class="favorites-section">
+        <h2 class="section-title">Citations</h2>
+        <div class="favorites-grid">
+            {{range .FavoriteQuotes}}
+            <div class="favorite-item">
+                <a href="/characters/{{.ID}}" class="favorite-card quote-card">
+                    <div class="quote-text">"{{.Quote}}"</div>
+                    <div class="quote-author">- {{.Name}}</div>
+                </a>
+                <button class="remove-favorite-btn" onclick="removeFavorite('quote', '{{.ID}}')">
+                    ❤️
+                </button>
+            </div>
+            {{end}}
+        </div>
+    </section>
+    {{end}}
+
+    <!-- Styles de combat favoris -->
+    {{if .FavoriteCombatStyles}}
+    <section class="favorites-section">
+        <h2 class="section-title">Styles de Combat</h2>
+        <div class="favorites-list">
+            {{range .FavoriteCombatStyles}}
+            <div class="favorite-list-item">
+                <span class="favorite-list-name">{{.}}</span>
+                <button class="remove-favorite-btn-small" onclick="removeFavorite('combat_style', '{{.}}')">
+                    ❤️
+                </button>
+            </div>
+            {{end}}
+        </div>
+    </section>
+    {{end}}
+
+    <!-- Races favorites -->
+    {{if .FavoriteRaces}}
+    <section class="favorites-section">
+        <h2 class="section-title">Races</h2>
+        <div class="favorites-list">
+            {{range .FavoriteRaces}}
+            <div class="favorite-list-item">
+                <span class="favorite-list-name">{{.}}</span>
+                <button class="remove-favorite-btn-small" onclick="removeFavorite('race', '{{.}}')">
+                    ❤️
+                </button>
+            </div>
+            {{end}}
+        </div>
+    </section>
+    {{end}}
+
+    <!-- Message si aucun favori -->
+    {{if not (or .FavoriteCharacters .FavoriteQuotes .FavoriteCombatStyles .FavoriteRaces)}}
+    <div class="no-favorites">
+        <p>Vous n'avez pas encore de favoris.</p>
+        <p>Explorez le site et ajoutez vos éléments préférés !</p>
+    </div>
+    {{end}}
+</div>
+{{end}}
+
+{{define "page-js"}}
+<script src="/static/js/favorites.js"></script>
+{{end}}
