@@ -95,7 +95,6 @@ func (s *AuthService) Register(email, password string) (*models.User, error) {
 		return nil, fmt.Errorf("erreur sauvegarde user: %w", err)
 	}
 
-	log.Printf("✅ Nouvel utilisateur créé: %s (ID: %d)", email, newUser.ID)
 	return &newUser, nil
 }
 
@@ -111,7 +110,6 @@ func (s *AuthService) Login(email, password string) (*models.User, error) {
 			if user.Password != password {
 				return nil, ErrInvalidPassword
 			}
-			log.Printf("Connexion réussie: %s", email)
 			return &user, nil
 		}
 	}

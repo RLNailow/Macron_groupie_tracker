@@ -8,20 +8,15 @@
     margin-bottom: 40px;
 }
 
-/* Carte style de combat - maintenant cliquable */
+/* Carte style de combat */
 .style-card {
-    background: rgba(58, 78, 68, 0.8);
-    padding: 30px 20px;
+    background: rgba(45, 67, 53, 0.8);
     border-radius: 10px;
-    text-align: center;
-    min-height: 180px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
+    overflow: hidden;
     transition: transform 0.3s, box-shadow 0.3s;
     cursor: pointer;
+    display: flex;
+    flex-direction: column;
     text-decoration: none;
 }
 
@@ -30,18 +25,36 @@
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
 }
 
-/* Nom du style */
-.style-name {
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
+/* Image du style */
+.style-image {
+    width: 100%;
+    height: 250px;
+    background-size: cover;
+    background-position: center;
+    background-color: rgba(0, 0, 0, 0.2);
 }
 
-/* Description (si disponible) */
-.style-description {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.8);
-    line-height: 1.4;
+/* Nom du style */
+.style-name {
+    padding: 20px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background: rgba(45, 67, 53, 0.95);
+}
+
+/* Style card sans image - centrer le nom */
+.style-card:not(:has(.style-image)) {
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+}
+
+.style-card:not(:has(.style-image)) .style-name {
+    background: transparent;
+    padding: 30px;
+    font-size: 18px;
 }
 
 /* ========== RESPONSIVE ========== */
@@ -63,16 +76,12 @@
         gap: 15px;
     }
 
-    .style-card {
-        padding: 20px 15px;
-        min-height: 150px;
+    .style-image {
+        height: 200px;
     }
 
     .style-name {
-        font-size: 16px;
-    }
-
-    .style-description {
-        font-size: 12px;
+        padding: 15px;
+        font-size: 14px;
     }
 }

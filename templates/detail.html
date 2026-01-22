@@ -28,6 +28,14 @@
 
         <!-- Informations (droite) -->
         <div class="detail-right">
+            <!-- Description du personnage -->
+            {{if .Character.Description}}
+            <div class="info-card">
+                <h3 class="info-title">Description</h3>
+                <p class="info-text">{{.Character.Description}}</p>
+            </div>
+            {{end}}
+
             <!-- Citation avec bouton favori -->
             {{if .Character.Quote}}
             <div class="info-card">

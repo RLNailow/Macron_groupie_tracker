@@ -26,7 +26,7 @@
 
 .favorite-card {
     display: block;
-    background: rgba(58, 78, 68, 0.8);
+    background: rgba(45, 67, 53, 0.8);
     border-radius: 10px;
     overflow: hidden;
     transition: transform 0.3s, box-shadow 0.3s;
@@ -70,7 +70,7 @@
 
 .quote-author {
     font-weight: bold;
-    color: #5a7a6f;
+    color: #668173;
     text-align: right;
 }
 
@@ -102,7 +102,7 @@
 }
 
 .favorite-list-item {
-    background: rgba(58, 78, 68, 0.8);
+    background: rgba(45, 67, 53, 0.8);
     padding: 20px;
     border-radius: 10px;
     display: flex;

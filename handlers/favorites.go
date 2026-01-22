@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"API-demon-slayyyyy-/models"
 	"API-demon-slayyyyy-/services"
 	"html/template"
 	"log"
@@ -10,34 +11,59 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Helper: vérifie si un ID existe dans une slice
+func containsInt(slice []int, val int) bool {
+	for _, item := range slice {
+		if item == val {
+			return true
+		}
+	}
+	return false
+}
+
+// Helper: vérifie si une string existe dans une slice
+func containsString(slice []string, val string) bool {
+	for _, item := range slice {
+		if item == val {
+			return true
+		}
+	}
+	return false
+}
+
+// Helper: retire un ID d'une slice
+func removeInt(slice []int, val int) []int {
+	result := []int{}
+	for _, item := range slice {
+		if item != val {
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
+// Helper: retire une string d'une slice
+func removeString(slice []string, val string) []string {
+	result := []string{}
+	for _, item := range slice {
+		if item != val {
+			result = append(result, item)
+		}
+	}
+	return result
+}
+
 // FavoritesHandler affiche la page des favoris de l'utilisateur
 func FavoritesHandler(w http.ResponseWriter, r *http.Request) {
 	// Récupérer l'utilisateur connecté
-	user := getUserFromCookie(r)
-	if user == nil {
+	userObj := getUserFromCookie(r)
+	if userObj == nil {
 		http.Redirect(w, r, "/?error=login_required", http.StatusSeeOther)
 		return
 	}
 
 	// Récupérer les détails des favoris
 	apiService := services.GetAPIService()
-	authService := services.GetAuthService()
-
-	// Cast de l'utilisateur
-	userEmail := ""
-	switch v := user.(type) {
-	case map[string]interface{}:
-		if email, ok := v["email"].(string); ok {
-			userEmail = email
-		}
-	}
-
-	userObj, err := authService.GetUserByEmail(userEmail)
-	if err != nil {
-		log.Printf("Erreur récupération user: %v", err)
-		http.Redirect(w, r, "/", http.StatusSeeOther)
-		return
-	}
 
 	// Récupérer les personnages favoris
 	var favoriteCharacters []interface{}
@@ -71,14 +97,14 @@ func FavoritesHandler(w http.ResponseWriter, r *http.Request) {
 	// Données à passer au template
 	data := struct {
 		PageTitle            string
-		User                 interface{}
+		User                 *models.User
 		FavoriteCharacters   []interface{}
 		FavoriteQuotes       []interface{}
 		FavoriteCombatStyles []string
 		FavoriteRaces        []string
 	}{
 		PageTitle:            "Mes Favoris - Demon Slayer",
-		User:                 user,
+		User:                 userObj,
 		FavoriteCharacters:   favoriteCharacters,
 		FavoriteQuotes:       favoriteQuotes,
 		FavoriteCombatStyles: userObj.Favorites.CombatStyles,
@@ -96,11 +122,9 @@ func FavoritesHandler(w http.ResponseWriter, r *http.Request) {
 // AddFavoriteHandler ajoute un élément aux favoris
 func AddFavoriteHandler(w http.ResponseWriter, r *http.Request) {
 	// Récupérer l'utilisateur connecté
-	user := getUserFromCookie(r)
-	if user == nil {
-		respondJSON(w, http.StatusUnauthorized, map[string]string{
-			"error": "Non connecté",
-		})
+	userObj := getUserFromCookie(r)
+	if userObj == nil {
+		respondJSON(w, http.StatusUnauthorized, map[string]string{"error": "Non connecté"})
 		return
 	}
 
@@ -109,120 +133,52 @@ func AddFavoriteHandler(w http.ResponseWriter, r *http.Request) {
 	favoriteType := vars["type"] // "character", "quote", "combat_style", "race"
 	valueStr := vars["value"]
 
-	// Récupérer l'utilisateur
-	authService := services.GetAuthService()
-	userEmail := ""
-	switch v := user.(type) {
-	case map[string]interface{}:
-		if email, ok := v["email"].(string); ok {
-			userEmail = email
-		}
-	}
-
-	userObj, err := authService.GetUserByEmail(userEmail)
-	if err != nil {
-		respondJSON(w, http.StatusInternalServerError, map[string]string{
-			"error": "Erreur utilisateur",
-		})
-		return
-	}
-
 	// Ajouter aux favoris selon le type
 	added := false
 	switch favoriteType {
 	case "character", "quote":
 		id, err := strconv.Atoi(valueStr)
 		if err != nil {
-			respondJSON(w, http.StatusBadRequest, map[string]string{
-				"error": "ID invalide",
-			})
+			respondJSON(w, http.StatusBadRequest, map[string]string{"error": "ID invalide"})
 			return
 		}
-
-		if favoriteType == "character" {
-			// Vérifier si déjà en favoris
-			alreadyExists := false
-			for _, fav := range userObj.Favorites.Characters {
-				if fav == id {
-					alreadyExists = true
-					break
-				}
-			}
-			if !alreadyExists {
-				userObj.Favorites.Characters = append(userObj.Favorites.Characters, id)
-				added = true
-			}
-		} else {
-			// Quote
-			alreadyExists := false
-			for _, fav := range userObj.Favorites.Quotes {
-				if fav == id {
-					alreadyExists = true
-					break
-				}
-			}
-			if !alreadyExists {
-				userObj.Favorites.Quotes = append(userObj.Favorites.Quotes, id)
-				added = true
-			}
+		if favoriteType == "character" && !containsInt(userObj.Favorites.Characters, id) {
+			userObj.Favorites.Characters = append(userObj.Favorites.Characters, id)
+			added = true
+		} else if favoriteType == "quote" && !containsInt(userObj.Favorites.Quotes, id) {
+			userObj.Favorites.Quotes = append(userObj.Favorites.Quotes, id)
+			added = true
 		}
-
-	case "combat_style", "race":
-		if favoriteType == "combat_style" {
-			// Vérifier si déjà en favoris
-			alreadyExists := false
-			for _, fav := range userObj.Favorites.CombatStyles {
-				if fav == valueStr {
-					alreadyExists = true
-					break
-				}
-			}
-			if !alreadyExists {
-				userObj.Favorites.CombatStyles = append(userObj.Favorites.CombatStyles, valueStr)
-				added = true
-			}
-		} else {
-			// Race
-			alreadyExists := false
-			for _, fav := range userObj.Favorites.Races {
-				if fav == valueStr {
-					alreadyExists = true
-					break
-				}
-			}
-			if !alreadyExists {
-				userObj.Favorites.Races = append(userObj.Favorites.Races, valueStr)
-				added = true
-			}
+	case "combat_style":
+		if !containsString(userObj.Favorites.CombatStyles, valueStr) {
+			userObj.Favorites.CombatStyles = append(userObj.Favorites.CombatStyles, valueStr)
+			added = true
+		}
+	case "race":
+		if !containsString(userObj.Favorites.Races, valueStr) {
+			userObj.Favorites.Races = append(userObj.Favorites.Races, valueStr)
+			added = true
 		}
 	}
 
 	// Sauvegarder les modifications
 	if added {
-		if err := authService.UpdateUser(userObj); err != nil {
+		if err := services.GetAuthService().UpdateUser(userObj); err != nil {
 			log.Printf("Erreur sauvegarde favoris: %v", err)
-			respondJSON(w, http.StatusInternalServerError, map[string]string{
-				"error": "Erreur de sauvegarde",
-			})
+			respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "Erreur de sauvegarde"})
 			return
 		}
 	}
 
-	respondJSON(w, http.StatusOK, map[string]interface{}{
-		"success": true,
-		"added":   added,
-		"message": "Ajouté aux favoris",
-	})
+	respondJSON(w, http.StatusOK, map[string]interface{}{"success": true, "added": added, "message": "Ajouté aux favoris"})
 }
 
 // RemoveFavoriteHandler retire un élément des favoris
 func RemoveFavoriteHandler(w http.ResponseWriter, r *http.Request) {
 	// Récupérer l'utilisateur connecté
-	user := getUserFromCookie(r)
-	if user == nil {
-		respondJSON(w, http.StatusUnauthorized, map[string]string{
-			"error": "Non connecté",
-		})
+	userObj := getUserFromCookie(r)
+	if userObj == nil {
+		respondJSON(w, http.StatusUnauthorized, map[string]string{"error": "Non connecté"})
 		return
 	}
 
@@ -231,96 +187,42 @@ func RemoveFavoriteHandler(w http.ResponseWriter, r *http.Request) {
 	favoriteType := vars["type"]
 	valueStr := vars["value"]
 
-	// Récupérer l'utilisateur
-	authService := services.GetAuthService()
-	userEmail := ""
-	switch v := user.(type) {
-	case map[string]interface{}:
-		if email, ok := v["email"].(string); ok {
-			userEmail = email
-		}
-	}
-
-	userObj, err := authService.GetUserByEmail(userEmail)
-	if err != nil {
-		respondJSON(w, http.StatusInternalServerError, map[string]string{
-			"error": "Erreur utilisateur",
-		})
-		return
-	}
-
 	// Retirer des favoris selon le type
 	removed := false
 	switch favoriteType {
 	case "character", "quote":
 		id, err := strconv.Atoi(valueStr)
 		if err != nil {
-			respondJSON(w, http.StatusBadRequest, map[string]string{
-				"error": "ID invalide",
-			})
+			respondJSON(w, http.StatusBadRequest, map[string]string{"error": "ID invalide"})
 			return
 		}
-
-		if favoriteType == "character" {
-			newFavorites := []int{}
-			for _, fav := range userObj.Favorites.Characters {
-				if fav != id {
-					newFavorites = append(newFavorites, fav)
-				} else {
-					removed = true
-				}
-			}
-			userObj.Favorites.Characters = newFavorites
-		} else {
-			newFavorites := []int{}
-			for _, fav := range userObj.Favorites.Quotes {
-				if fav != id {
-					newFavorites = append(newFavorites, fav)
-				} else {
-					removed = true
-				}
-			}
-			userObj.Favorites.Quotes = newFavorites
+		if favoriteType == "character" && containsInt(userObj.Favorites.Characters, id) {
+			userObj.Favorites.Characters = removeInt(userObj.Favorites.Characters, id)
+			removed = true
+		} else if favoriteType == "quote" && containsInt(userObj.Favorites.Quotes, id) {
+			userObj.Favorites.Quotes = removeInt(userObj.Favorites.Quotes, id)
+			removed = true
 		}
-
-	case "combat_style", "race":
-		if favoriteType == "combat_style" {
-			newFavorites := []string{}
-			for _, fav := range userObj.Favorites.CombatStyles {
-				if fav != valueStr {
-					newFavorites = append(newFavorites, fav)
-				} else {
-					removed = true
-				}
-			}
-			userObj.Favorites.CombatStyles = newFavorites
-		} else {
-			newFavorites := []string{}
-			for _, fav := range userObj.Favorites.Races {
-				if fav != valueStr {
-					newFavorites = append(newFavorites, fav)
-				} else {
-					removed = true
-				}
-			}
-			userObj.Favorites.Races = newFavorites
+	case "combat_style":
+		if containsString(userObj.Favorites.CombatStyles, valueStr) {
+			userObj.Favorites.CombatStyles = removeString(userObj.Favorites.CombatStyles, valueStr)
+			removed = true
+		}
+	case "race":
+		if containsString(userObj.Favorites.Races, valueStr) {
+			userObj.Favorites.Races = removeString(userObj.Favorites.Races, valueStr)
+			removed = true
 		}
 	}
 
 	// Sauvegarder les modifications
 	if removed {
-		if err := authService.UpdateUser(userObj); err != nil {
+		if err := services.GetAuthService().UpdateUser(userObj); err != nil {
 			log.Printf("Erreur sauvegarde favoris: %v", err)
-			respondJSON(w, http.StatusInternalServerError, map[string]string{
-				"error": "Erreur de sauvegarde",
-			})
+			respondJSON(w, http.StatusInternalServerError, map[string]string{"error": "Erreur de sauvegarde"})
 			return
 		}
 	}
 
-	respondJSON(w, http.StatusOK, map[string]interface{}{
-		"success": true,
-		"removed": removed,
-		"message": "Retiré des favoris",
-	})
+	respondJSON(w, http.StatusOK, map[string]interface{}{"success": true, "removed": removed, "message": "Retiré des favoris"})
 }

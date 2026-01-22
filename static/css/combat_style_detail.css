@@ -1,4 +1,4 @@
-/* ========== CHARACTER DETAIL PAGE ========== */
+/* ========== COMBAT STYLE DETAIL PAGE ========== */
 .detail-page-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -35,7 +35,7 @@
     border-bottom: 3px solid #1a1a1a;
 }
 
-/* Titre : Nom du personnage */
+/* Titre : Nom du style */
 .detail-page-title {
     font-size: 48px;
     text-align: center;
@@ -101,20 +101,17 @@
     gap: 30px;
 }
 
+/* Colonne droite en pleine largeur quand pas d'image */
+.detail-right-full {
+    grid-column: 1 / -1;
+}
+
 /* Cartes d'information */
 .info-card {
     background: rgba(255, 255, 255, 0.9);
     padding: 30px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* En-tête de carte avec titre + bouton favori */
-.info-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
 }
 
 .info-title {
@@ -124,24 +121,6 @@
     font-family: 'Questrial', sans-serif;
 }
 
-/* Petit bouton favori dans les cartes */
-.favorite-btn-small {
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    transition: transform 0.3s;
-    padding: 5px;
-}
-
-.favorite-btn-small:hover {
-    transform: scale(1.2);
-}
-
-.favorite-btn-small.is-favorite {
-    animation: heartBeat 0.3s;
-}
-
 .info-text {
     font-size: 18px;
     line-height: 1.6;
@@ -149,10 +128,32 @@
     font-family: 'Questrial', sans-serif;
 }
 
-/* Citation (sans titre "Race" ou "Style de combat") */
-.info-card:first-child .info-title {
-    margin-bottom: 0;
-    font-style: italic;
+/* Liste des personnages */
+.characters-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.character-link-simple {
+    display: block;
+    padding: 15px;
+    background: rgba(102, 129, 115, 0.1);
+    border-radius: 8px;
+    transition: background 0.3s, transform 0.3s;
+    text-decoration: none;
+    color: #1a1a1a;
+}
+
+.character-link-simple:hover {
+    background: rgba(102, 129, 115, 0.3);
+    transform: translateX(5px);
+}
+
+.character-link-simple span {
+    font-size: 18px;
+    font-weight: bold;
+    font-family: 'Questrial', sans-serif;
 }
 
 /* Bouton "CHOOSE FOR ME !" vertical à droite */
@@ -239,7 +240,12 @@
         font-size: 16px;
     }
 
-    .favorite-btn-small {
-        font-size: 20px;
+    .character-mini-img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .character-link span {
+        font-size: 16px;
     }
 }

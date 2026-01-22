@@ -1,0 +1,87 @@
+{{define "page-css"}}
+<link rel="stylesheet" href="/static/css/combat_style_detail.css">
+{{end}}
+
+{{define "content"}}
+<div class="detail-page-container">
+    <!-- Bouton retour en haut à gauche -->
+    <button class="back-btn-detail" onclick="history.back()">←</button>
+
+    <!-- Titre : Nom du style avec bouton favori -->
+    <div class="detail-title-container">
+        <h1 class="detail-page-title">{{.Style.Name}}</h1>
+        {{if .User}}
+        <button class="favorite-btn" data-favorite-type="combat_style" data-favorite-value="{{.Style.Name}}" onclick="addFavorite('combat_style', '{{.Style.Name}}')">
+            🤍
+        </button>
+        {{end}}
+    </div>
+
+    <!-- Contenu principal : Image à gauche + Infos à droite -->
+    <div class="detail-main-content">
+        <!-- Image du style (gauche) - seulement si disponible -->
+        {{if .Style.Img}}
+        <div class="detail-left">
+            <div class="character-image-box">
+                <img src="{{.Style.Img}}" alt="{{.Style.Name}}">
+            </div>
+        </div>
+        {{end}}
+
+        <!-- Informations (droite) -->
+        <div class="detail-right {{if not .Style.Img}}detail-right-full{{end}}">
+            <!-- Description -->
+            <div class="info-card">
+                <h3 class="info-title">Description</h3>
+                <p class="info-text">{{.Style.Description}}</p>
+            </div>
+
+            <!-- Liste des personnages utilisant ce style -->
+            {{if .Style.Characters}}
+            <div class="info-card">
+                <h3 class="info-title">Personnages utilisant ce style</h3>
+                <div class="characters-list">
+                    {{range .Style.Characters}}
+                    <a href="/characters/{{.ID}}" class="character-link-simple">
+                        <span>{{.Name}}</span>
+                    </a>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
+        </div>
+    </div>
+
+    <!-- Bouton "CHOOSE FOR ME !" vertical à droite -->
+    <button class="choose-me-vertical-btn" onclick="goToRandomCharacter()">CHOOSE FOR ME !</button>
+</div>
+
+<script src="/static/js/favorites.js"></script>
+<script>
+// Fonction embarquée pour garantir qu'elle soit disponible
+async function goToRandomCharacter() {
+    console.log('Bouton cliqué ! Démarrage...');
+
+    try {
+        console.log('📡 Appel de /api/random-character...');
+
+        const response = await fetch('/api/random-character');
+
+        console.log('Réponse reçue:', response.status);
+
+        if (!response.ok) {
+            throw new Error('Erreur lors de la récupération');
+        }
+
+        const data = await response.json();
+        console.log('Données reçues:', data);
+
+        console.log('Redirection vers /characters/' + data.id);
+        window.location.href = `/characters/${data.id}`;
+    } catch (error) {
+        console.error('ERREUR:', error);
+        alert('Erreur: ' + error.message);
+    }
+}
+</script>
+{{end}}

@@ -12,23 +12,18 @@
     <!-- Barre de recherche -->
     <div class="search-container">
         <div class="search-box">
-            <span class="search-icon">🔍</span>
-            <input 
-                type="text" 
-                id="searchInput" 
-                placeholder="Rechercher un personnage..." 
+            <img src="/static/images/loupe.avif" alt="Search" class="search-icon">
+            <input
+                type="text"
+                id="searchInput"
+                placeholder="Rechercher un personnage..."
                 autocomplete="off"
             >
             <button class="close-icon" onclick="clearSearch()">✕</button>
         </div>
-        
+
         <!-- Résultats de recherche (affichés dynamiquement) -->
         <div class="search-results" id="searchResults"></div>
-    </div>
-
-    <!-- Personnage d'accueil (Tanjiro) -->
-    <div class="home-character">
-        <img src="/static/images/tanjiro.png" alt="Tanjiro Kamado">
     </div>
 </div>
 {{end}}

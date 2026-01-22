@@ -16,7 +16,9 @@ type Character struct {
 
 // BreathingTechnique représente un style de combat
 type BreathingTechnique struct {
-	ID          int    `json:"id"`          // ID unique
-	Name        string `json:"name"`        // Nom du style (ex: "Water Breathing")
-	Description string `json:"description"` // Description
+	ID          int         `json:"id"`                       // ID unique
+	Name        string      `json:"name"`                     // Nom du style (ex: "Water Breathing")
+	Description string      `json:"description"`              // Description
+	Img         string      `json:"img"`                      // URL de l'image du style
+	Characters  []Character `json:"combat_style_character"`   // Liste des personnages utilisant ce style
 }

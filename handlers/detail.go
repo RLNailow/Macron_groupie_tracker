@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/gorilla/mux"
 )
@@ -32,8 +31,8 @@ func DetailHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Extraire le style de combat depuis la description
-	combatStyle := extractCombatStyle(character.Description)
+	// Récupérer le style de combat depuis l'API
+	combatStyle, _ := apiService.GetCombatStyleForCharacter(id)
 
 	// Charger le template
 	tmpl, err := template.ParseFiles("templates/layout.html", "templates/detail.html")
@@ -62,74 +61,4 @@ func DetailHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Erreur serveur", http.StatusInternalServerError)
 		return
 	}
-}
-
-// extractCombatStyle extrait le style de combat depuis la description
-func extractCombatStyle(description string) string {
-	if description == "" {
-		return "Aucun style de combat connu"
-	}
-
-	descLower := strings.ToLower(description)
-
-	// Liste des styles de combat connus (élargie)
-	knownStyles := []string{
-		"Water Breathing",
-		"Thunder Breathing",
-		"Flame Breathing",
-		"Wind Breathing",
-		"Stone Breathing",
-		"Mist Breathing",
-		"Serpent Breathing",
-		"Insect Breathing",
-		"Sound Breathing",
-		"Moon Breathing",
-		"Sun Breathing",
-		"Beast Breathing",
-		"Flower Breathing",
-		"Love Breathing",
-		"Blood Demon Art",
-		"Demon Blood Art",
-	}
-
-	// 1. Chercher si un style est mentionné exactement
-	for _, style := range knownStyles {
-		if strings.Contains(descLower, strings.ToLower(style)) {
-			return style
-		}
-	}
-
-	// 2. Chercher des variations (mot-clé + "breath")
-	breathingKeywords := []string{
-		"water", "thunder", "flame", "wind", "stone",
-		"mist", "serpent", "insect", "sound", "moon",
-		"sun", "beast", "flower", "love",
-	}
-
-	for _, keyword := range breathingKeywords {
-		if strings.Contains(descLower, keyword+" breath") {
-			// Capitaliser la première lettre
-			return strings.Title(keyword) + " Breathing"
-		}
-	}
-
-	// 3. Chercher "Demon" pour les démons
-	if strings.Contains(descLower, "demon") {
-		if strings.Contains(descLower, "blood") {
-			return "Blood Demon Art"
-		}
-		if strings.Contains(descLower, "art") {
-			return "Demon Blood Art"
-		}
-	}
-
-	// 4. Chercher n'importe quel mot suivi de "Breathing"
-	words := strings.Fields(description)
-	for i := 0; i < len(words)-1; i++ {
-		if strings.ToLower(words[i+1]) == "breathing" {
-			return words[i] + " Breathing"
-		}
-	}
-
-	return "Aucun style de combat connu"
 }

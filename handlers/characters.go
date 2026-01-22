@@ -34,15 +34,8 @@ func CharactersHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Filtrer par race si un filtre est spécifié
 	var filteredCharacters []interface{}
-	if raceFilter != "" {
-		for _, char := range allCharacters {
-			if char.Race == raceFilter {
-				filteredCharacters = append(filteredCharacters, char)
-			}
-		}
-	} else {
-		// Pas de filtre, afficher tous les personnages
-		for _, char := range allCharacters {
+	for _, char := range allCharacters {
+		if raceFilter == "" || char.Race == raceFilter {
 			filteredCharacters = append(filteredCharacters, char)
 		}
 	}

@@ -29,12 +29,12 @@
             <!-- Bouton login/user -->
             {{if .User}}
                 <button class="login-btn" onclick="logout()">
-                    <div class="user-icon">👤</div>
+                    <img src="/static/images/login_tanjiro.png" alt="User" class="user-icon">
                     <span>{{.User.Email}}</span>
                 </button>
             {{else}}
                 <button class="login-btn" onclick="openAuthModal()">
-                    <div class="user-icon">👤</div>
+                    <img src="/static/images/login_tanjiro.png" alt="Login" class="user-icon">
                     <span>login</span>
                 </button>
             {{end}}

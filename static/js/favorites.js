@@ -9,16 +9,12 @@ async function addFavorite(type, value) {
         const data = await response.json();
 
         if (response.ok) {
-            console.log('✅ Ajouté aux favoris');
-            // Mettre à jour l'icône
             updateFavoriteIcon(type, value, true);
             showNotification('Ajouté aux favoris ❤️');
         } else {
-            console.error('❌ Erreur:', data.error);
             showNotification('Erreur lors de l\'ajout');
         }
     } catch (error) {
-        console.error('❌ Erreur:', error);
         showNotification('Erreur de connexion');
     }
 }
@@ -33,15 +29,11 @@ async function removeFavorite(type, value) {
         const data = await response.json();
 
         if (response.ok) {
-            console.log('✅ Retiré des favoris');
-            // Recharger la page pour mettre à jour l'affichage
             window.location.reload();
         } else {
-            console.error('❌ Erreur:', data.error);
             showNotification('Erreur lors de la suppression');
         }
     } catch (error) {
-        console.error('❌ Erreur:', error);
         showNotification('Erreur de connexion');
     }
 }
@@ -91,7 +83,7 @@ style.textContent = `
         position: fixed;
         top: 100px;
         right: 20px;
-        background: rgba(58, 78, 68, 0.95);
+        background: rgba(45, 67, 53, 0.95);
         color: white;
         padding: 15px 30px;
         border-radius: 10px;
@@ -130,5 +122,3 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
-
-console.log('❤️ Module favoris chargé');

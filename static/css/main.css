@@ -7,7 +7,7 @@
 
 body {
     font-family: 'Questrial', sans-serif;
-    background: linear-gradient(135deg, #5a7a6f 0%, #4a6860 100%);
+    background: linear-gradient(135deg, #668173 0%, #2D4335 100%);
     min-height: 100vh;
     color: #1a1a1a;
 }
@@ -33,7 +33,7 @@ button {
     justify-content: space-between;
     align-items: center;
     z-index: 900;
-    background: rgba(90, 122, 111, 0.95);
+    background: rgba(102, 129, 115, 0.95);
 }
 
 .header-left {
@@ -74,13 +74,8 @@ button {
 .user-icon {
     width: 40px;
     height: 40px;
-    background: #1a1a1a;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 20px;
+    object-fit: cover;
 }
 
 /* Hamburger menu */
@@ -114,7 +109,7 @@ button {
     top: 0;
     width: 400px;
     height: 100vh;
-    background: rgba(90, 122, 111, 0.98);
+    background: rgba(102, 129, 115, 0.98);
     transition: right 0.3s ease;
     z-index: 1000;
     padding: 40px;
@@ -239,13 +234,13 @@ button {
 
 .auth-content input:focus {
     outline: none;
-    border-color: #5a7a6f;
+    border-color: #668173;
 }
 
 .auth-content button {
     width: 100%;
     padding: 15px;
-    background: #5a7a6f;
+    background: #668173;
     color: white;
     border: none;
     border-radius: 5px;
@@ -254,14 +249,14 @@ button {
 }
 
 .auth-content button:hover {
-    background: #4a6860;
+    background: #2D4335;
 }
 
 .auth-toggle {
     text-align: center;
     margin-top: 20px;
     cursor: pointer;
-    color: #5a7a6f;
+    color: #668173;
     transition: color 0.3s;
 }
 
@@ -300,7 +295,7 @@ button {
 }
 
 .pagination-btn {
-    background: rgba(58, 78, 68, 0.9);
+    background: rgba(45, 67, 53, 0.9);
     color: white;
     border: none;
     padding: 15px 40px;
@@ -311,7 +306,7 @@ button {
 
 .pagination-btn:hover:not(:disabled) {
     transform: scale(1.05);
-    background: rgba(58, 78, 68, 1);
+    background: rgba(45, 67, 53, 1);
 }
 
 .pagination-btn:disabled {

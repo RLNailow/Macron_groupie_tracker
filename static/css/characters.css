@@ -10,7 +10,7 @@
 
 /* Carte personnage */
 .character-card {
-    background: rgba(58, 78, 68, 0.8);
+    background: rgba(45, 67, 53, 0.8);
     border-radius: 10px;
     overflow: hidden;
     transition: transform 0.3s, box-shadow 0.3s;
@@ -40,7 +40,7 @@
     font-size: 16px;
     font-weight: bold;
     color: white;
-    background: rgba(58, 78, 68, 0.95);
+    background: rgba(45, 67, 53, 0.95);
 }
 
 /* ========== RESPONSIVE ========== */

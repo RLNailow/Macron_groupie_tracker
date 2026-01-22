@@ -20,7 +20,7 @@
 
 /* Bouton géant "CHOOSE FOR ME !" */
 .choose-btn {
-    background: rgba(58, 78, 68, 0.9);
+    background: rgba(45, 67, 53, 0.9);
     color: white;
     border: none;
     padding: 40px 100px;
@@ -34,7 +34,7 @@
 
 .choose-btn:hover {
     transform: scale(1.1);
-    background: rgba(58, 78, 68, 1);
+    background: rgba(45, 67, 53, 1);
     box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
     animation: none;
 }

@@ -47,7 +47,9 @@
     left: 20px;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
     z-index: 1;
 }
 
@@ -138,35 +140,35 @@
 .home-character {
     max-width: 300px;
     width: 100%;
-    animation: float 3s ease-in-out infinite;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    filter: none !important;
+    padding: 0 !important;
+    margin: 0 auto !important;
 }
 
 .home-character img {
     width: 100%;
     height: auto;
-    border-radius: 10px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    display: block;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    filter: none !important;
+    border-radius: 0 !important;
 }
 
-/* ========== ANIMATIONS ========== */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes float {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-10px);
-    }
+/* Tanjiro en bas à droite de la page */
+.tanjiro-corner {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    width: 250px;
+    height: auto;
+    z-index: 50;
 }
 
 /* ========== RESPONSIVE ========== */
@@ -177,5 +179,9 @@
 
     .home-character {
         max-width: 200px;
+    }
+
+    .tanjiro-corner {
+        width: 150px;
     }
 }

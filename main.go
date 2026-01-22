@@ -36,11 +36,16 @@ func main() {
 	router.HandleFunc("/characters/{id:[0-9]+}", handlers.DetailHandler).Methods("GET")
 	router.HandleFunc("/races", handlers.RacesHandler).Methods("GET")
 	router.HandleFunc("/combat-styles", handlers.CombatStylesHandler).Methods("GET")
+	router.HandleFunc("/combat-styles/{id:[0-9]+}", handlers.CombatStyleDetailHandler).Methods("GET")
 	router.HandleFunc("/quotes", handlers.QuotesHandler).Methods("GET")
 	router.HandleFunc("/random", handlers.RandomHandler).Methods("GET")
 
 	// API interne pour obtenir un ID aléatoire
 	router.HandleFunc("/api/random-character", handlers.GetRandomCharacterID).Methods("GET")
+
+	// API pour la recherche (évite les problèmes CORS)
+	router.HandleFunc("/api/characters", handlers.APICharactersHandler).Methods("GET")
+	router.HandleFunc("/api/combat-styles", handlers.APICombatStylesHandler).Methods("GET")
 
 	// ==================== ROUTES PROTÉGÉES ====================
 
@@ -61,13 +66,7 @@ func main() {
 
 	// ==================== DÉMARRAGE DU SERVEUR ====================
 
-	log.Println("🔥 Serveur démarré sur http://localhost:8080")
-	log.Println("📁 Fichiers statiques servis depuis /static/")
-	log.Println("🎨 Templates chargés depuis /templates/")
-	log.Println("✅ Nouvelles fonctionnalités:")
-	log.Println("   - Styles de combat cliquables (voir personnages)")
-	log.Println("   - Races cliquables (filtrer par race)")
-	log.Println("   - Recherche améliorée (par ID ou nom)")
+	log.Println("Serveur démarré sur http://localhost:8080")
 
 	// Lancer le serveur sur le port 8080
 	if err := http.ListenAndServe(":8080", router); err != nil {

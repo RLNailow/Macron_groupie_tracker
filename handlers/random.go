@@ -2,12 +2,10 @@ package handlers
 
 import (
 	"API-demon-slayyyyy-/services"
-	"encoding/json"
 	"html/template"
 	"log"
 	"math/rand"
 	"net/http"
-	"time"
 )
 
 // RandomHandler affiche la page "aléatoire" avec le bouton "CHOOSE FOR ME"
@@ -55,13 +53,9 @@ func GetRandomCharacterID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Sélectionner un personnage aléatoire
-	rand.Seed(time.Now().UnixNano())
 	randomIndex := rand.Intn(len(characters))
 	randomCharacter := characters[randomIndex]
 
 	// Retourner l'ID en JSON
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]int{
-		"id": randomCharacter.ID,
-	})
+	respondJSON(w, http.StatusOK, map[string]int{"id": randomCharacter.ID})
 }

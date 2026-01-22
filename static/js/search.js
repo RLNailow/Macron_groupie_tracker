@@ -1,119 +1,162 @@
-// ========== RECHERCHE SIMPLIFIÉE ==========
-
 let allCharacters = [];
 let allStyles = [];
 
-// Charger les personnages
 async function loadCharacters() {
     try {
-        const response = await fetch('https://www.demonslayer-api.com/api/v1/characters?limit=100');
+        const response = await fetch('/api/characters');
         const data = await response.json();
-        allCharacters = data.content || [];
-        console.log('✅ Personnages chargés:', allCharacters.length);
+        allCharacters = data || [];
     } catch (error) {
-        console.error('❌ Erreur chargement personnages:', error);
         allCharacters = [];
     }
 }
 
-// Charger les styles de combat depuis l'API
 async function loadStyles() {
     try {
-        const response = await fetch('https://www.demonslayer-api.com/api/v1/combat-styles?limit=100');
+        const response = await fetch('/api/combat-styles');
         const data = await response.json();
-        allStyles = data.content || [];
-        console.log('✅ Styles de combat chargés:', allStyles.length);
+        allStyles = data || [];
     } catch (error) {
-        console.error('❌ Erreur chargement styles:', error);
         allStyles = [];
     }
 }
 
-// Rechercher
+function levenshteinDistance(str1, str2) {
+    const len1 = str1.length;
+    const len2 = str2.length;
+    const matrix = [];
+
+    for (let i = 0; i <= len1; i++) {
+        matrix[i] = [i];
+    }
+
+    for (let j = 0; j <= len2; j++) {
+        matrix[0][j] = j;
+    }
+
+    for (let i = 1; i <= len1; i++) {
+        for (let j = 1; j <= len2; j++) {
+            if (str1.charAt(i - 1) === str2.charAt(j - 1)) {
+                matrix[i][j] = matrix[i - 1][j - 1];
+            } else {
+                matrix[i][j] = Math.min(
+                    matrix[i - 1][j - 1] + 1,
+                    matrix[i][j - 1] + 1,
+                    matrix[i - 1][j] + 1
+                );
+            }
+        }
+    }
+
+    return matrix[len1][len2];
+}
+
+function fuzzyMatch(text, query) {
+    const textLower = text.toLowerCase();
+    const queryLower = query.toLowerCase();
+
+    if (textLower.includes(queryLower)) {
+        return 0;
+    }
+
+    const distance = levenshteinDistance(textLower, queryLower);
+    const maxLength = Math.max(textLower.length, queryLower.length);
+
+    if (distance / maxLength < 0.3) {
+        return distance;
+    }
+
+    return Infinity;
+}
+
 function search(query) {
     if (!query || query.length < 1) return [];
-    
+
     const q = query.toLowerCase();
     const results = [];
-    
-    // Est-ce un ID ?
     const isNumber = /^\d+$/.test(query);
-    
+
     if (isNumber) {
         const id = parseInt(query);
-        
-        // Chercher personnage par ID
+
         const char = allCharacters.find(c => c.id === id);
         if (char) {
             results.push({
                 type: 'char',
                 name: char.name,
                 img: char.img,
-                url: `/characters/${char.id}`
+                url: `/characters/${char.id}`,
+                score: 0
             });
         }
-        
-        // Chercher style par ID
+
         const style = allStyles.find(s => s.id === id);
         if (style) {
             results.push({
                 type: 'style',
                 name: style.name,
-                url: `/combat-styles/${encodeURIComponent(style.name)}`
+                url: `/combat-styles/${style.id}`,
+                score: 0
             });
         }
     }
-    
-    // Chercher par nom dans personnages
+
     allCharacters.forEach(char => {
-        if (char.name && char.name.toLowerCase().includes(q) && results.length < 5) {
-            results.push({
-                type: 'char',
-                name: char.name,
-                img: char.img,
-                url: `/characters/${char.id}`
-            });
+        if (char.name) {
+            const score = fuzzyMatch(char.name, q);
+            if (score !== Infinity && !results.find(r => r.type === 'char' && r.name === char.name)) {
+                results.push({
+                    type: 'char',
+                    name: char.name,
+                    img: char.img,
+                    url: `/characters/${char.id}`,
+                    score: score
+                });
+            }
         }
     });
-    
-    // Chercher par nom dans styles
+
     allStyles.forEach(style => {
-        if (style.name && style.name.toLowerCase().includes(q) && results.length < 8) {
-            results.push({
-                type: 'style',
-                name: style.name,
-                url: `/combat-styles/${encodeURIComponent(style.name)}`
-            });
+        if (style.name) {
+            const score = fuzzyMatch(style.name, q);
+            if (score !== Infinity && !results.find(r => r.type === 'style' && r.name === style.name)) {
+                results.push({
+                    type: 'style',
+                    name: style.name,
+                    url: `/combat-styles/${style.id}`,
+                    score: score
+                });
+            }
         }
     });
-    
-    // Chercher dans citations
+
     allCharacters.forEach(char => {
-        if (char.quote && char.quote.toLowerCase().includes(q) && results.length < 8) {
+        if (char.quote && char.quote.toLowerCase().includes(q) && !results.find(r => r.name === char.name)) {
             results.push({
                 type: 'quote',
                 name: char.name,
                 quote: char.quote,
                 img: char.img,
-                url: `/characters/${char.id}`
+                url: `/characters/${char.id}`,
+                score: 100
             });
         }
     });
-    
+
+    results.sort((a, b) => a.score - b.score);
     return results.slice(0, 8);
 }
 
-// Afficher résultats
 function showResults(results) {
     const div = document.getElementById('searchResults');
     if (!div) return;
-    
+
     if (results.length === 0) {
         div.innerHTML = '<div class="search-no-results">Aucun résultat</div>';
         div.classList.add('active');
         return;
     }
-    
+
     let html = '';
     results.forEach(r => {
         if (r.type === 'char') {
@@ -129,7 +172,7 @@ function showResults(results) {
         } else if (r.type === 'style') {
             html += `
                 <a href="${r.url}" class="search-result-item">
-                    <div style="width:50px;height:50px;border-radius:50%;background:rgba(58,78,68,0.8);display:flex;align-items:center;justify-content:center;font-size:24px;">⚔️</div>
+                    <img src="/static/images/combatstyle.webp" class="search-result-img" alt="${r.name}">
                     <div>
                         <div class="search-result-name">${r.name}</div>
                         <div class="search-result-race">Style de combat</div>
@@ -149,12 +192,11 @@ function showResults(results) {
             `;
         }
     });
-    
+
     div.innerHTML = html;
     div.classList.add('active');
 }
 
-// Cacher résultats
 function hideResults() {
     const div = document.getElementById('searchResults');
     if (div) {
@@ -162,23 +204,15 @@ function hideResults() {
     }
 }
 
-// Init
 document.addEventListener('DOMContentLoaded', async () => {
     const input = document.getElementById('searchInput');
     const resultsDiv = document.getElementById('searchResults');
-    
-    if (!input) {
-        console.log('Pas de recherche sur cette page');
-        return;
-    }
-    
-    console.log('🔍 Recherche activée');
-    
-    // Charger données
+
+    if (!input) return;
+
     await loadCharacters();
     await loadStyles();
-    
-    // Input
+
     input.addEventListener('input', async (e) => {
         const query = e.target.value;
         if (query.length < 1) {
@@ -188,19 +222,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         const results = search(query);
         showResults(results);
     });
-    
-    // Focus
+
     input.addEventListener('focus', (e) => {
         if (e.target.value.length >= 1) {
             const results = search(e.target.value);
             showResults(results);
         }
     });
-    
-    // Blur
+
     input.addEventListener('blur', hideResults);
-    
-    // Enter
+
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -210,8 +241,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }
     });
-    
-    // Click outside
+
     document.addEventListener('click', (e) => {
         if (!input.contains(e.target) && resultsDiv && !resultsDiv.contains(e.target)) {
             hideResults();
@@ -219,7 +249,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
-// Style
 const css = document.createElement('style');
 css.textContent = `
     .search-result-race {
@@ -229,5 +258,3 @@ css.textContent = `
     }
 `;
 document.head.appendChild(css);
-
-console.log('🔍 Module de recherche chargé');
